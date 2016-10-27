@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.licanhua.test</groupId>
+	<artifactId>selenium-automation-parent</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>selenium automation framework parent</name>
+	<developers>
+		<developer>
+			<id>licanhua</id>
+			<name>canhua li</name>
+			<email>licanhua@live.com</email>
+			<roles>
+				<role>owner</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-8</timezone>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>selenium-automation-framework</module>
+		<module>selenium-automation-example</module>
+	</modules>
+</project>
+
