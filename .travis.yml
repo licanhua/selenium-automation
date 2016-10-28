@@ -5,6 +5,7 @@ script: mvn test
 branches:
   except:
     - travis
+    - master
 
 env:
   global:
