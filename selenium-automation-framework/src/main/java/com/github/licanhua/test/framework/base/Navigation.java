@@ -28,16 +28,18 @@ public interface Navigation {
     /**
      * Navigate to another Page, a page class should be provided.
      * @param pageClass a instance of pageClass will be created.
+     * @return a instance of T
      * @see com.github.licanhua.test.framework.util.PageHelper#toPage(Class, ElementContext)
      */
-    public <T> T toPage(Class<T> pageClass);
+    <T> T toPage(Class<T> pageClass);
     /**
      * First click on a webElement, then
      * Navigate to another Page, a page class should be provided.
      * @param pageClass a instance of pageClass will be created.
      * @param webElement to be clicked. it can be WebElement or any subclass of
-     *                   WebElement like {@like SelectBox} and {@like CheckBox}
-     * @see com.github.licanhua.test.framework.util.PageHelper#clickAndToPage(WebElement, Class, ElementContext)
+     *                   WebElement like {@link SelectBox} and {@link CheckBox}
+     * @return a instance of T
+     * @see com.github.licanhua.test.framework.util.PageHelper#clickAndToPage(WebElement, Class, Element)
      */
-    public <T> T clickAndToPage(WebElement webElement, Class<T> pageClass);
+    <T> T clickAndToPage(WebElement webElement, Class<T> pageClass);
 }
