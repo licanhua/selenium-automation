@@ -159,6 +159,7 @@ If you need run against RemoteWebDriver like Selenium Grid, all you  need to do 
     remoteWebDriverAddress=http://localhost:4444/wd/hub
 
 If you want to talk to Remote WebDriver and want different DesiredCapabilities, just defined a config file in config/${browserName}.ini. Framework would load this file automatically and negotiate with remote webdriver. Here is an example for firefox
+
     config/browser/firefox.ini
         browserName=firefox
         version=
@@ -219,6 +220,7 @@ Another one is find element relative to other element. Please use Container(see 
 A new way to use Select, Checkbox and RadioButton.
 -------------
 Have you written this test case?
+
     public class DemoPage{
         @FindBy(id="selectdemo")
         WebElement selectElement;
@@ -284,17 +286,18 @@ In the old ways, I always write this kind of test case
 
 **New Code Sample**
 
-   class DemoTest {
-        @Rule
-        public AutomationDriver automationDriver = new AutomationDriver();
 
-        @Test
-        public void demoTest() {
-           automationDriver.getWebDriver()..navigate().to("https://www.amazon.com")
-            HomePage homePage = new HomePage();
-            homePage.toCarSearchPage();
-        }
-    }
+	class DemoTest {
+		@Rule
+		public AutomationDriver automationDriver = new AutomationDriver();
+
+		@Test
+		public void demoTest() {
+		   automationDriver.getWebDriver()..navigate().to("https://www.amazon.com")
+			HomePage homePage = new HomePage();
+			homePage.toCarSearchPage();
+		}
+	}
 
 **You only need annotate the AutomationDriver with @Rule, automation framework would help you handle all the dirt work**
 
@@ -338,6 +341,7 @@ This framework provide PageHelper to help you create new Pages and navigate betw
 A new way to handle snapshot
 -------------
 Have you ever had this clickSubmit() function?
+
     public class DemoPage {
         public void clickSubmit() {
                // Take snapshot
@@ -407,6 +411,7 @@ If you have a Selenium test project, if you search WebDriver, how many it includ
 A new way you don't need call PageFactory any more.
 -------------
 I don't know how you make PageFactory to initialize a page object. In old days, I always define a parent Page object and it look like this:
+
     public class PageBase {
         public PageBase(WebDriver webDriver) {
             initElements();
