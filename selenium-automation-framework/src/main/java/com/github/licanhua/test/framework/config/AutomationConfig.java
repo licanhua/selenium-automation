@@ -17,6 +17,7 @@
 
 package com.github.licanhua.test.framework.config;
 
+import com.github.licanhua.test.framework.Const;
 import com.github.licanhua.test.framework.util.ConfigurationHelper;
 
 import java.util.Properties;
@@ -27,6 +28,7 @@ import java.util.Properties;
 public class AutomationConfig {
     String browserName;
     int waitDurationInSeconds;
+    int ajaxTimeoutInSeconds;
     String remoteWebDriverAddress;
     boolean autoSnapshot;
 
@@ -34,11 +36,16 @@ public class AutomationConfig {
         return browserName;
     }
 
-    private AutomationConfig(String browserName, int waitDurationInSeconds, String remoteWebDriverAddress, boolean autoSnapshot) {
+    private AutomationConfig(String browserName, int waitDurationInSeconds, int ajaxTimeoutInSeconds,String remoteWebDriverAddress, boolean autoSnapshot) {
         this.browserName = browserName;
         this.waitDurationInSeconds = waitDurationInSeconds;
         this.remoteWebDriverAddress = remoteWebDriverAddress;
         this.autoSnapshot = autoSnapshot;
+        this.ajaxTimeoutInSeconds = ajaxTimeoutInSeconds;
+    }
+
+    public int getAjaxTimeoutInSeconds() {
+        return ajaxTimeoutInSeconds;
     }
 
     public int getWaitDurationInSeconds() {
@@ -57,26 +64,14 @@ public class AutomationConfig {
         return remoteWebDriverAddress;
     }
 
-    public final static String AUTOMATION_INI = "config/automation.ini";
-
-    // default values
-    public final static String DEDAULT_BROWSER_NAME = "firefox";
-    public final static String DEFAULT_WAIT_DURATION_IN_SECONDS = "10";
-    public final static String DEFAULT_REMOTE_WEB_DRIVER_ADDRESS = "";
-    public final static String DEFAULT_AUTOSNAPSHOT = "false";
-    // keys
-    public final static String BROWSER_NAME = "browserName";
-    public final static String WAIT_DURATION_IN_SECONDS = "waitDurationInSeconds";
-    public final static String REMOTE_WEB_DRIVER_ADDRESS = "remoteWebDriverAddress";
-    public final static String AUTO_SNAPSHOT = "autoSnapshot";
-
     public static AutomationConfig getAutomationConfig() {
-        Properties properties = ConfigurationHelper.load(AUTOMATION_INI);
-        String browserName = properties.getProperty(BROWSER_NAME, DEDAULT_BROWSER_NAME);
-        int waitDurationInSeconds = Integer.parseInt(properties.getProperty(WAIT_DURATION_IN_SECONDS, DEFAULT_WAIT_DURATION_IN_SECONDS));
-        String remoteWebDriverAddress = properties.getProperty(REMOTE_WEB_DRIVER_ADDRESS, DEFAULT_REMOTE_WEB_DRIVER_ADDRESS);
-        boolean autoSnapshot = Boolean.valueOf(properties.getProperty(AUTO_SNAPSHOT, DEFAULT_AUTOSNAPSHOT));
+        Properties properties = ConfigurationHelper.load(Const.AUTOMATION_INI);
+        String browserName = properties.getProperty(Const.BROWSER_NAME, Const.DEDAULT_BROWSER_NAME);
+        int waitDurationInSeconds = Integer.parseInt(properties.getProperty(Const.WAIT_DURATION_IN_SECONDS, Const.DEFAULT_WAIT_DURATION_IN_SECONDS));
+        int ajaxTimeoutInSeconds = Integer.parseInt(properties.getProperty(Const.AJAX_TIMEOUT_IN_SECONDS, Const.DEFAULT_AJAX_TIMEOUT_IN_SECONDS));
+        String remoteWebDriverAddress = properties.getProperty(Const.REMOTE_WEB_DRIVER_ADDRESS, Const.DEFAULT_REMOTE_WEB_DRIVER_ADDRESS);
+        boolean autoSnapshot = Boolean.valueOf(properties.getProperty(Const.AUTO_SNAPSHOT, Const.DEFAULT_AUTOSNAPSHOT));
 
-        return new AutomationConfig(browserName, waitDurationInSeconds, remoteWebDriverAddress, autoSnapshot);
+        return new AutomationConfig(browserName, waitDurationInSeconds, ajaxTimeoutInSeconds, remoteWebDriverAddress, autoSnapshot);
     }
 }

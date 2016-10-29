@@ -15,6 +15,7 @@ public class SuggestionSelectComponent extends Container{
     List<WebElement> selections;
 
     public void select(int index) {
+        logger.info("selections: select " + index);
         if (selections.size() > index)
             selections.get(index).click();
         else

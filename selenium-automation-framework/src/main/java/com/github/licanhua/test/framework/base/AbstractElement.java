@@ -97,7 +97,7 @@ public abstract class AbstractElement implements Element, ValidationHandler,
         this.parent = parent;
         this.elementContext = ElementContext.createFromParentContext(parent, this.getClass());
 
-        logger.info(this.getClass()+ "try to create all Element and WebElement belongs to this object");
+        logger.info(this.getClass()+ " try to create all Element and WebElement belongs to this object");
 
         if (elementContext.isAjax()) {
             logger.debug("This is a ajax page");

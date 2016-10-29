@@ -85,7 +85,9 @@ public class ValidateFieldDecorator implements FieldDecorator {
             validateElement(webElement, field.getName());
         } else if (List.class.isAssignableFrom(field.getType())) {
             List<WebElement> list = (List<WebElement>) object;
-            list.size();
+            if (list.size() == 0) {
+                throw new RuntimeException("List size is 0. Can't find any element for " + field.getName());
+            }
         } else {
             throw new RuntimeException("It should not happen");
         }

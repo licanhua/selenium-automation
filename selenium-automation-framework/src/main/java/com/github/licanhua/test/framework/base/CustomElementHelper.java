@@ -20,10 +20,12 @@ package com.github.licanhua.test.framework.base;
 import com.google.common.base.Predicates;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
+import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.WrapsElement;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -50,6 +52,53 @@ public class CustomElementHelper {
         return (Class<?>)((ParameterizedType) genericType).getActualTypeArguments()[0];
     }
 
+    static class CustomElementLazyProxy implements MethodInterceptor {
+        private Class<?> delegateClass;
+        private Element parent;
+        private WebElement element;
+        private Object delegate = null;
+
+        public CustomElementLazyProxy(final WebElement element, final Class<?> delegateClass, final  Element parent) {
+            this.delegateClass = delegateClass;
+            this.parent = parent;
+            this.element = element;
+        }
+
+        public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+            if ("toString".equals(method.getName()) && delegate == null) {
+                return "This is lazy proxy for CustomElement for " +  delegateClass.getName();
+            }
+
+            //logger.info(method.getName() + " is called for " + delegateClass.getName());
+            if ("getWrappedElement".equals(method.getName())) {
+                return element;
+            }
+
+            if (delegate == null) {
+                CustomElement customElement = null;
+                // create a instance for subclass of CustomElement
+                try {
+                    logger.info("create a instance for " + delegateClass.getName());
+                    customElement = (CustomElement) delegateClass.newInstance();
+                } catch (Exception e) {
+                    throw Throwables.propagate(e);
+                }
+
+                try {
+                    logger.debug(delegateClass.getName() + ".setWrappedElement(WebElement wrappedElement)");
+                    customElement.setWrappedElement(element);
+
+                    logger.info(delegateClass.getName() + ".initElements(" + parent.getClass().getName() + " parent)");
+                    customElement.initElements(parent);
+                } catch (Exception e) {
+                    throw Throwables.propagate(e);
+                }
+
+                delegate = customElement;
+            }
+            return methodProxy.invoke(delegate, objects);
+        }
+    }
     static boolean isDecoratableElement(Class<?> clazz) {
         return CustomElement.class.isAssignableFrom(clazz);
     }
@@ -77,29 +126,20 @@ public class CustomElementHelper {
                 .first()
                 .isPresent();
     }
-    // instantiate the custom element
-    static Object  instantiateCustomElement(final WebElement element, final Class<?> clazz, final  Element parent) {
-        CustomElement customElement = null;
-
-        // create a instance for subclass of CustomElement
-        try {
-            logger.info("create a instance for " + clazz.getName());
-            customElement= (CustomElement) clazz.newInstance();
-        }   catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
-
-        try {
-            logger.debug(clazz.getName() + ".setWrappedElement(" + element + ")");
-            customElement.setWrappedElement(element);
-
-            logger.info(clazz.getName() + ".initElements(" + parent.getClass().getName() + ")");
-            customElement.initElements(parent);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
 
 
-        return customElement;
+    static Object createLazyProxyCustomElement(final WebElement element, final Class<?> clazz, final  Element parent) {
+        logger.debug("Create lazy proxy for " + clazz.getName());
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(clazz);
+        Callback callback = new CustomElementLazyProxy(element, clazz, parent);
+        enhancer.setCallbacks( new Callback[] {callback} );
+        //enhancer.setCallbackType(CustomElementLazyProxy.class);
+        enhancer.setUseFactory(false);
+
+        Object proxy = enhancer.create();
+        logger.debug("Create lazy proxy Complete for " + clazz.getName());
+        return proxy;
     }
+
 }

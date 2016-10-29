@@ -2,6 +2,7 @@ package framework.expedia.pages;
 
 import com.github.licanhua.test.framework.Container;
 
+import com.github.licanhua.test.framework.annotation.RelativeElement;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,8 +12,8 @@ import java.util.List;
 public class CarSearchResultComponent extends Container{
     private static Logger logger = Logger.getLogger(CarSearchResultComponent.class.getName());
 
-
-    @FindBy(xpath=".//a[starts-with(@id, 'aria-option-')]")
+    @RelativeElement
+    @FindBy(xpath=".//a[starts-with(@id, 'ember')]")
     List<WebElement> reserveButtons;
 
     public void reserve(int index) {

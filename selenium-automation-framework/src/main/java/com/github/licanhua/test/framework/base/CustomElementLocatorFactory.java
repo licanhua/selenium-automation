@@ -17,10 +17,12 @@
 
 package com.github.licanhua.test.framework.base;
 
+import com.github.licanhua.test.framework.annotation.RelativeElement;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.support.pagefactory.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -41,8 +43,9 @@ public class CustomElementLocatorFactory implements ElementLocatorFactory {
     private ElementLocator createLocator(SearchContext searchContext, Field field) {
         ElementContext context = parent.getElementContext();
         if (context.isAjax()) {
-            logger.debug("AjaxElementLocator is created for " + field.getName());
-            return new AjaxElementLocator(searchContext, field, context.getWaitDurationInSeconds());
+            logger.debug("AjaxElementLocator is created for " + field.getName()
+                    + " with AjaxTimeoutInSeconds setting: " + context.getAjaxTimeoutInSeconds());
+            return new AjaxElementLocator(searchContext, field, context.getAjaxTimeoutInSeconds());
         } else {
             logger.debug("DefaultElementLocator is created for " + field.getName());
             return new DefaultElementLocator(searchContext, field);
@@ -61,20 +64,18 @@ public class CustomElementLocatorFactory implements ElementLocatorFactory {
 
         // Only Subclass like Container from CustomElement can act as parent searchContext.
         // All elements in a Page, WebDriver will be it's parent, and act as the searchContext.
-        if (isCustomElement(parent.getClass())) {
-            if (isCustomElement(field.getClass())) {
-                logger.debug(field.getName() + " is a custom element, and it's searchContext change to " + parent.getClass().getName());
-                searchContext = (CustomElement) parent;
-            } else if (List.class.isAssignableFrom(field.getType())) {
-                Type genericType = field.getGenericType();
-                Type listType = ((ParameterizedType) genericType).getActualTypeArguments()[0];
-
-                if (isCustomElement((Class) listType)) {
-                    logger.debug(field.getName() + " is a custom element, and it's searchContext change to " + parent.getClass().getName());
-                    searchContext = (CustomElement) parent;
-                }
-            }
+        // only RelativeElement annotated field will change search context.
+        if (isCustomElement(parent.getClass()) && isRelativeElement(field)) {
+            searchContext = (CustomElement) parent;
+            logger.info("RelativeElement is found and " + field.getName() + " search context has changed to " + searchContext.getClass().getName());
         }
-        return createLocator((SearchContext) searchContext, field);
+
+        ElementLocator locator = createLocator((SearchContext) searchContext, field);
+        logger.debug("locator created: " + locator);
+        return locator;
+    }
+
+    private boolean isRelativeElement(Field field) {
+        return field.getAnnotation(RelativeElement.class) != null;
     }
 }

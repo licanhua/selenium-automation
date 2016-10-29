@@ -77,7 +77,8 @@ public abstract class AbstractWebDriverProvider implements WebDriverProvider {
 
         return new WebDriverContext.WebDriverContextBuilder().withWebDriver(webDriver)
                 .withWebDriverProvider(this)
-                .withWaitDurationInSeconds(automationConfig.getWaitDurationInSeconds()).build();
+                .withWaitDurationInSeconds(automationConfig.getWaitDurationInSeconds())
+                .withAjaxTimeoutInSeconds(automationConfig.getAjaxTimeoutInSeconds()).build();
     }
 
     public void takesScreenshot(WebDriverContext webDriverContext) {

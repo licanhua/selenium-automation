@@ -115,7 +115,7 @@ public class PageHelper {
         int waitDuration = context.getWaitDurationInSeconds();
 
         try{
-            Wait<WebDriver> wait = new WebDriverWait(webDriver, 100);
+            Wait<WebDriver> wait = new WebDriverWait(webDriver, waitDuration, 100);
             wait.until(new ExpectedCondition<Boolean>() {
                 public Boolean apply(final WebDriver webDriver) {
                     try {
@@ -138,6 +138,7 @@ public class PageHelper {
         String message = constructFunctionMessage(functionName, element, parent);
         logger.info(message);
         waitForElement(message, parent.getElementContext(), element, predicate);
+        logger.info(message + " complete");
     }
 
     private static <T> String constructFunctionMessage(String functionName, T element, Element parent) {
