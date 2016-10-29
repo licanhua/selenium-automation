@@ -75,7 +75,7 @@ public class CustomFieldDecorator implements FieldDecorator {
 
         if (CustomElementHelper.isDecoratableElement(field)) {
             WebElement webElement = proxyForLocator(loader, locator);
-            return CustomElementHelper.instantiateCustomElement(webElement, field.getType(), parent);
+            return CustomElementHelper.createLazyProxyCustomElement(webElement, field.getType(), parent);
         } else  {
             return proxyForCustomListLocator(loader, locator, field , parent);
         }
@@ -84,23 +84,26 @@ public class CustomFieldDecorator implements FieldDecorator {
 
 
     private WebElement proxyForLocator(ClassLoader loader, ElementLocator locator) {
+        logger.debug("proxyForLocator : " + locator);
         InvocationHandler handler = new LocatingElementHandler(locator);
 
         WebElement proxy;
         proxy = (WebElement) Proxy.newProxyInstance(
                 loader, new Class[]{WebElement.class, WrapsElement.class, Locatable.class}, handler);
 
+        logger.debug("proxyForLocator complete : " + locator);
         return proxy;
     }
 
     private List<?> proxyForCustomListLocator(ClassLoader loader, ElementLocator locator, Field field, Element parent) {
-        logger.debug("proxyForCustomListLocator for " + field.getName());
+        logger.debug("proxyForCustomListLocator for " + field.getName() + " and its locator is: " + locator);
         Class<?> clazz = CustomElementHelper.getElementTypeFromListField(field);
         InvocationHandler handler = new LocatingCustomElementListHandler(locator, clazz, parent );
 
         List<?> proxy;
         proxy = (List<?>) Proxy.newProxyInstance(
                 loader, new Class[]{List.class}, handler);
+        logger.debug("proxyForCustomListLocator complete for " + field.getName() + " and its locator is: " + locator);
         return proxy;
     }
 

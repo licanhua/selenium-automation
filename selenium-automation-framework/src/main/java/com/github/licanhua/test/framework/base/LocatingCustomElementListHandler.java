@@ -55,7 +55,7 @@ public class LocatingCustomElementListHandler implements InvocationHandler {
         List<AbstractElement> wrappers = new ArrayList<AbstractElement>();
         for (WebElement element : elements) {
             try {
-                wrappers.add((AbstractElement)CustomElementHelper.instantiateCustomElement(element, type, parent));
+                wrappers.add((AbstractElement)CustomElementHelper.createLazyProxyCustomElement(element, type, parent));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

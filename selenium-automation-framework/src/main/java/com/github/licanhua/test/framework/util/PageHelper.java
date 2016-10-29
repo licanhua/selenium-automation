@@ -138,6 +138,7 @@ public class PageHelper {
         String message = constructFunctionMessage(functionName, element, parent);
         logger.info(message);
         waitForElement(message, parent.getElementContext(), element, predicate);
+        logger.info(message + " complete");
     }
 
     private static <T> String constructFunctionMessage(String functionName, T element, Element parent) {
