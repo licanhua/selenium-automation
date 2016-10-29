@@ -14,8 +14,8 @@ public class Const {
     * in {@link com.github.licanhua.test.framework.base.WaitFunctions}
     * {@code waitDurationInSeconds} should be big than {@code ajaxTimeoutInSeconds}
     * because it will call multiple findElement(s) until waitDurationInSeconds timeout.
-     * <p>
-    * @{code ajaxTimeoutInSeconds}: How many seconds a {@link org.openqa.selenium.WebElement#findElement(By)} or
+    *
+    * {@code ajaxTimeoutInSeconds}: How many seconds a {@link org.openqa.selenium.WebElement#findElement(By)} or
     * {@link org.openqa.selenium.WebElement#findElements(By)} timeout. When you call any {@link org.openqa.selenium.WebElement} function
     * a findElements is twigged and Selenium will throw {@link NoSuchElementException} if ajaxTimeoutInSeconds reached.
     * ajaxTimeoutInSeconds should less than waitDurationInSeconds
