@@ -1,0 +1,8 @@
+.idea/
+.idea/uiDesigner.xml
+*.releaseBackup
+*.versionsBackup
+release.properties
+*.iml
+target/
+testOutput/
