@@ -26,6 +26,7 @@ import org.openqa.selenium.WebDriver;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.github.licanhua.test.framework.Const.DEFAULT_MIN_TIME_OUT_IN_SECONDS;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -34,6 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WebDriverContext {
     WebDriver webDriver;
     int waitDurationInSeconds;
+    int ajaxTimeoutInSeconds;
     String timestamp;
     WebDriverProvider webDriverProvider;
 
@@ -41,6 +43,11 @@ public class WebDriverContext {
         SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
         timestamp = sdfTime.format(new Date());
     }
+
+    public int getAjaxTimeoutInSeconds() {
+        return ajaxTimeoutInSeconds;
+    }
+
     private WebDriverContext() {
     }
 
@@ -66,10 +73,14 @@ public class WebDriverContext {
         }
 
         public WebDriverContextBuilder withWaitDurationInSeconds(int waitDurationInSeconds) {
-            webDriverContext.waitDurationInSeconds = waitDurationInSeconds;
+            webDriverContext.waitDurationInSeconds = Math.max(waitDurationInSeconds,DEFAULT_MIN_TIME_OUT_IN_SECONDS);
             return this;
         }
 
+        public WebDriverContextBuilder withAjaxTimeoutInSeconds(int ajaxTimeoutInSeconds) {
+            webDriverContext.ajaxTimeoutInSeconds = Math.max(ajaxTimeoutInSeconds,DEFAULT_MIN_TIME_OUT_IN_SECONDS);
+            return this;
+        }
         public WebDriverContextBuilder withWebDriver(WebDriver webDriver) {
             webDriverContext.webDriver = webDriver;
             return this;
@@ -78,6 +89,7 @@ public class WebDriverContext {
         public WebDriverContext build() {
             checkNotNull(webDriverContext.webDriver);
             checkNotNull(webDriverContext.webDriverProvider);
+            webDriverContext.initTimestamp();
             return webDriverContext;
         }
     }

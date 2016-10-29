@@ -59,6 +59,9 @@ public final class ElementContext {
         return environmentContext.getWebDriverContext().getWaitDurationInSeconds();
     }
 
+    public int getAjaxTimeoutInSeconds() {
+        return environmentContext.getWebDriverContext().getAjaxTimeoutInSeconds();
+    }
     public Configuration getConfiguration() {
         return environmentContext.getConfiguration();
     }

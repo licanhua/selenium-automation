@@ -115,7 +115,7 @@ public class PageHelper {
         int waitDuration = context.getWaitDurationInSeconds();
 
         try{
-            Wait<WebDriver> wait = new WebDriverWait(webDriver, 100);
+            Wait<WebDriver> wait = new WebDriverWait(webDriver, waitDuration, 100);
             wait.until(new ExpectedCondition<Boolean>() {
                 public Boolean apply(final WebDriver webDriver) {
                     try {

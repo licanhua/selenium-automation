@@ -43,8 +43,9 @@ public class CustomElementLocatorFactory implements ElementLocatorFactory {
     private ElementLocator createLocator(SearchContext searchContext, Field field) {
         ElementContext context = parent.getElementContext();
         if (context.isAjax()) {
-            logger.debug("AjaxElementLocator is created for " + field.getName());
-            return new AjaxElementLocator(searchContext, field, context.getWaitDurationInSeconds());
+            logger.debug("AjaxElementLocator is created for " + field.getName()
+                    + " with AjaxTimeoutInSeconds setting: " + context.getAjaxTimeoutInSeconds());
+            return new AjaxElementLocator(searchContext, field, context.getAjaxTimeoutInSeconds());
         } else {
             logger.debug("DefaultElementLocator is created for " + field.getName());
             return new DefaultElementLocator(searchContext, field);
@@ -65,11 +66,13 @@ public class CustomElementLocatorFactory implements ElementLocatorFactory {
         // All elements in a Page, WebDriver will be it's parent, and act as the searchContext.
         // only RelativeElement annotated field will change search context.
         if (isCustomElement(parent.getClass()) && isRelativeElement(field)) {
-            logger.info("RelativeElement is found and " + field.getName() + " search context has changed to " + searchContext.getClass().getName());
             searchContext = (CustomElement) parent;
+            logger.info("RelativeElement is found and " + field.getName() + " search context has changed to " + searchContext.getClass().getName());
         }
 
-        return createLocator((SearchContext) searchContext, field);
+        ElementLocator locator = createLocator((SearchContext) searchContext, field);
+        logger.debug("locator created: " + locator);
+        return locator;
     }
 
     private boolean isRelativeElement(Field field) {

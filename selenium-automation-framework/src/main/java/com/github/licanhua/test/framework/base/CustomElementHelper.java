@@ -66,10 +66,10 @@ public class CustomElementHelper {
 
         public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
             if ("toString".equals(method.getName()) && delegate == null) {
-                return "This is lazy proxy for CustomElement " + element;
+                return "This is lazy proxy for CustomElement for " +  delegateClass.getName();
             }
 
-            logger.info(method.getName() + " is called for " + delegateClass.getName());
+            //logger.info(method.getName() + " is called for " + delegateClass.getName());
             if ("getWrappedElement".equals(method.getName())) {
                 return element;
             }
@@ -85,7 +85,7 @@ public class CustomElementHelper {
                 }
 
                 try {
-                    logger.debug(delegateClass.getName() + ".setWrappedElement(" + element + ")");
+                    logger.debug(delegateClass.getName() + ".setWrappedElement(WebElement wrappedElement)");
                     customElement.setWrappedElement(element);
 
                     logger.info(delegateClass.getName() + ".initElements(" + parent.getClass().getName() + " parent)");
@@ -129,7 +129,7 @@ public class CustomElementHelper {
 
 
     static Object createLazyProxyCustomElement(final WebElement element, final Class<?> clazz, final  Element parent) {
-        logger.info("Create lazy proxy for " + clazz.getName() + " and it's wrapped element is " + element);
+        logger.debug("Create lazy proxy for " + clazz.getName());
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
         Callback callback = new CustomElementLazyProxy(element, clazz, parent);
@@ -138,7 +138,7 @@ public class CustomElementHelper {
         enhancer.setUseFactory(false);
 
         Object proxy = enhancer.create();
-        logger.info("Create lazy proxy Complete for " + clazz.getName() + " and it's wrapped element is " + element);
+        logger.debug("Create lazy proxy Complete for " + clazz.getName());
         return proxy;
     }
 

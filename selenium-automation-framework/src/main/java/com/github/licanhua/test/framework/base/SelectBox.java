@@ -42,7 +42,7 @@ public class SelectBox extends CustomElement implements ISelect {
     @Override
     public void validate() {
         logger.info("validate for SelectBox");
-        logger.debug("Wrapper object: " + getWrappedElement());
+        //logger.debug("Wrapper object: " + getWrappedElement());
         PageHelper.waitForElementToBePresent(getWrappedElement(), getParent());
     }
 
