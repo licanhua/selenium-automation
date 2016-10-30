@@ -145,7 +145,7 @@ Very simple, right? Just add @AutoValidation to your test Page class, and add @O
 A new way to run test against different browser like IE, Chrome, Firefox and even Selenium Grid
 -------------
 Do you want to make your test case run against IE, Chrome, Firefox and Selenium Grid without any modification? Don’t assume that driver will be an instance of FireFoxDriver or InternetExplorerDriver only. maybe It’s quite easy for you to create a small framework around selenium. Now it's ready for you to use.
-Just change the configuration in **config/automation.ini** to the browser you need. we support Firefox, Chrome, IE to run locally and any browser Remotely.
+Just change the configuration in **config/automation.properties** to the browser you need. we support Firefox, Chrome, IE to run locally and any browser Remotely.
 
     browserName=chrome
     waitDurationInSeconds=60
@@ -158,9 +158,9 @@ If you need run against RemoteWebDriver like Selenium Grid, all you  need to do 
     waitDurationInSeconds=60
     remoteWebDriverAddress=http://localhost:4444/wd/hub
 
-If you want to talk to Remote WebDriver and want different DesiredCapabilities, just defined a config file in config/${browserName}.ini. Framework would load this file automatically and negotiate with remote webdriver. Here is an example for firefox
+If you want to talk to Remote WebDriver and want different DesiredCapabilities, just defined a config file in config/${browserName}.properties. Framework would load this file automatically and negotiate with remote webdriver. Here is an example for firefox
 
-    config/browser/firefox.ini
+    config/browser/firefox.properties
         browserName=firefox
         version=
         platform=WINDOWS

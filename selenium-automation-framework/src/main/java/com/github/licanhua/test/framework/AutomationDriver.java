@@ -22,6 +22,8 @@ import com.github.licanhua.test.framework.config.Configuration;
 import com.github.licanhua.test.framework.config.ConfigurationService;
 import com.github.licanhua.test.framework.config.TypeSafeConfigurationService;
 import com.github.licanhua.test.framework.base.WebDriverContext;
+import com.github.licanhua.test.framework.util.PageHelper;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
@@ -73,6 +75,18 @@ public final class AutomationDriver extends TestWatcher {
         return configuration;
     }
 
+    private static void navigateTo(WebDriverContext webDriverContext, Configuration configuration) {
+        String startPage = configuration.getString(Const.START_PAGE);
+        if (Strings.isNullOrEmpty(startPage)) {
+            logger.info("No startPage found in configuration");
+        } else {
+            logger.info("Auto navigate to startPage: " + startPage);
+            webDriverContext.getWebDriver().navigate().to(startPage);
+            PageHelper.waitForDocumentReadyState(webDriverContext);
+            webDriverContext.getWebDriverProvider().takesScreenshot(webDriverContext);
+        }
+    }
+
     @Override
     protected void starting(Description description) {
         super.starting(description);
@@ -93,6 +107,9 @@ public final class AutomationDriver extends TestWatcher {
         environmentContext = new EnvironmentContext.EnvironmentContextBuilder()
                 .withWebDriverContext(webDriverContext).withConfiguration(configuration).build();
         Global.setEnviromentContext(environmentContext);
+
+        // navigate to startPage
+        navigateTo(webDriverContext, configuration);
     }
 
     public WebDriver getWebDriver() {
