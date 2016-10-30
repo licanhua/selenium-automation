@@ -53,10 +53,6 @@ public class AutomationConfig {
         return autoSnapshot;
     }
 
-    public void setAutoSnapshot(boolean autoSnapshot) {
-        this.autoSnapshot = autoSnapshot;
-    }
-
     public String getRemoteWebDriverAddress() {
         return remoteWebDriverAddress;
     }

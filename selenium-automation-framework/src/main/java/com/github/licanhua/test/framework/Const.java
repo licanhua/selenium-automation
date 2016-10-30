@@ -20,7 +20,6 @@ public class Const {
     * a findElements is twigged and Selenium will throw {@link NoSuchElementException} if ajaxTimeoutInSeconds reached.
     * ajaxTimeoutInSeconds should less than waitDurationInSeconds
     */
-    public final static String AUTOMATION_INI = "config/automation.properties";
     public final static String CONF_DIR="config/";
     public final static String BROWSER_CONFIG_DIR = "config/browser/";
     // default values
@@ -44,4 +43,5 @@ public class Const {
     // End Used by AutomationConfig
     public final static String TARGET_ENVIRONMENT = "targetEnvironment";
     public final static String DEFAULT_TARGET_ENVIRONMENT = "Prod";
+    public final static String START_PAGE = "startPage";
 }

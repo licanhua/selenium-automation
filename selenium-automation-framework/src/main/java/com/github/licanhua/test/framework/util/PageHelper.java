@@ -240,7 +240,7 @@ public class PageHelper {
         waitForElement("waitForTextToBeNotPresentInElement", parent, element, ElementPredicate.textToBeNotPresentInElement(text));
     }
 
-    private static void waitForDocumentReadyState(WebDriverContext webDriverContext) {
+    public static void waitForDocumentReadyState(WebDriverContext webDriverContext) {
         logger.info("Wait for document.readyState is complete");
         Wait<WebDriver> wait = new WebDriverWait(webDriverContext.getWebDriver(),webDriverContext.getWaitDurationInSeconds() , 100);
         wait.until(new ExpectedCondition<Boolean>() {
@@ -262,4 +262,6 @@ public class PageHelper {
     public static void waitForDocumentReadyState() {
         waitForDocumentReadyState(Global.getWebDriverContext());
     }
+
+
 }

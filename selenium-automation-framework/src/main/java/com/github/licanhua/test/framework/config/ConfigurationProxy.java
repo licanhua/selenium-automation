@@ -34,7 +34,7 @@ class ConfigurationProxy implements Configuration {
                 logger.debug("Looking for " + originKey + " in " + key);
                 try {
                     T r = function.apply(key);
-                    logger.debug("Looking for key " + originKey + " success with key: " + key);
+                    logger.debug("Looking for key " + originKey + " success with key: " + key + " Value: " + r.toString());
                     return r;
                 } catch (ConfigurationException.Missing e) {
                     logger.debug("Didn't find it in " + key);
@@ -49,7 +49,7 @@ class ConfigurationProxy implements Configuration {
         try {
             return get(function, path);
         } catch (ConfigurationException.Missing e) {
-            logger.info("Can't find " + path + " in configuration, will use default value");
+            logger.info("Can't find " + path + " in configuration, will use default value: " + defaultValue);
             return defaultValue;
         } catch (Exception e) {
             Throwables.propagate(e);

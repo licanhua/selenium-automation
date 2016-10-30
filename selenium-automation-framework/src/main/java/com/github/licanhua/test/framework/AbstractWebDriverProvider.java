@@ -66,10 +66,15 @@ public abstract class AbstractWebDriverProvider implements WebDriverProvider {
         return new WebDriverContext.WebDriverContextBuilder().withWebDriver(webDriver)
                 .withWebDriverProvider(this)
                 .withWaitDurationInSeconds(automationConfig.getWaitDurationInSeconds())
+                .withAutoSnapshot(automationConfig.isAutoSnapshot())
                 .withAjaxTimeoutInSeconds(automationConfig.getAjaxTimeoutInSeconds()).build();
     }
 
     public void takesScreenshot(WebDriverContext webDriverContext) {
+        if (!webDriverContext.isAutoSnapshot()) {
+            logger.debug("autoSnapshot is disabled. skip the snapshot");
+            return;
+        }
         String path = TEST_OUT + driverTimeStamp + "/" + testName + "/" + snapCount++;
         logger.info("Snapshot to : " + path);
         WebDriver webDriver = webDriverContext.getWebDriver();

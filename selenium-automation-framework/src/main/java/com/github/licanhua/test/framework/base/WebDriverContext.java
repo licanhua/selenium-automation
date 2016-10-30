@@ -36,6 +36,7 @@ public class WebDriverContext {
     WebDriver webDriver;
     int waitDurationInSeconds;
     int ajaxTimeoutInSeconds;
+    boolean autoSnapshot;
     String timestamp;
     WebDriverProvider webDriverProvider;
 
@@ -53,6 +54,10 @@ public class WebDriverContext {
 
     public WebDriver getWebDriver() {
         return webDriver;
+    }
+
+    public boolean isAutoSnapshot() {
+        return autoSnapshot;
     }
 
     public int getWaitDurationInSeconds() {
@@ -83,6 +88,11 @@ public class WebDriverContext {
         }
         public WebDriverContextBuilder withWebDriver(WebDriver webDriver) {
             webDriverContext.webDriver = webDriver;
+            return this;
+        }
+
+        public WebDriverContextBuilder withAutoSnapshot(boolean autoSnapshot) {
+            webDriverContext.autoSnapshot = autoSnapshot;
             return this;
         }
 
