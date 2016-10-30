@@ -27,7 +27,7 @@ In the old way, because java doesn't support multiple inheritance, we may descri
 	    @Findby(id="account")
 	    WebElement accountManagement;
 	}
-
+	
 	class NavigationPage extends HeaderPage {
 		@FindBy(id="flight")
 		WebElement flight;
@@ -67,7 +67,7 @@ This framework provides a nature way to organize and describe your Pages.
 	class HomePage extends Page{
 		@FindBy(id="head")
 		Header head;
-
+		
 		@FindBy(id="nav")
 		Navigation nav;
 	}
@@ -94,12 +94,12 @@ If your HomePage only have one mandatory nav WebElement, Have you written this c
 				return false;
 			}
 		}
-
+		
 		public doSearch() {
 			nav.toCarSearchPage();
 		}
-	}
-
+	}	
+   
     public class HomePageTest {
        @Test
        public void homePageTest () {
@@ -113,7 +113,7 @@ If your HomePage only have one mandatory nav WebElement, Have you written this c
 
     		page.doSearch();
     	}
-    }
+    }   
 
 You are not the only one. I wrote tons of this kind of test cases before. Now you don't need to do it any more.
 
