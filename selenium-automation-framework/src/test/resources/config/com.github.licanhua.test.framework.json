@@ -1,0 +1,15 @@
+{
+	"hello": {
+		"x": 1,
+		"y": 2
+	},
+	"strings": ["123",
+	"4"],
+
+	"overwrite": 1,
+
+	"testValueExistings": {"testNameFirst": 111},
+	"testNameFirst": 1,
+	"Prod": {"testProdFirst" : 111},
+	"testProdFirst" : 2111
+}

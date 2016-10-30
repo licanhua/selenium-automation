@@ -17,6 +17,8 @@
 
 package com.github.licanhua.test.framework.config;
 
+import org.openqa.selenium.remote.DesiredCapabilities;
+
 import java.util.List;
 
 /**
@@ -41,8 +43,14 @@ public interface Configuration {
     float getFloat(String key);
     float getFloat(String key, float defaultValue);
 
-    List<?> getList(String key);
-    List<?> getList(String key, List<?> defaultValue);
+    List<String> getStringList(String key);
+    List<String> getStringList(String key, List<String> defaultValue);
 
+    Object getObject(String key);
+    Object getObject(String key, Object defaultValue);
 
+    List<Object> getObjectList(String key);
+    List<Object> getObjectList(String key, List<Object> defaultValue);
+
+    DesiredCapabilities getDesiredCapabilities(String browserName);
 }

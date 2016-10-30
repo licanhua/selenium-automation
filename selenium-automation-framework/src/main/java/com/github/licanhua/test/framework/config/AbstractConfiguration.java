@@ -17,6 +17,8 @@
 
 package com.github.licanhua.test.framework.config;
 
+import com.github.licanhua.test.framework.Const;
+import com.github.licanhua.test.framework.util.ConfigurationHelper;
 import com.google.common.base.Converter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -25,8 +27,12 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.util.List;
+import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -35,6 +41,44 @@ import static com.google.common.base.Preconditions.checkState;
  * @author Canhua Li
  */
 public class AbstractConfiguration implements Configuration {
+    private static final Logger logger = Logger.getLogger(AbstractConfiguration.class.getName());
+
+    public Object getObject(String key) {
+        throw new ConfigurationException.NotImplement("getObject is not be implemented");
+    }
+
+    public Object getObject(String key, Object defaultValue) {
+        throw new ConfigurationException.NotImplement("getObject is not be implemented");
+    }
+
+    public List<Object> getObjectList(String key) {
+        throw new ConfigurationException.NotImplement("getObjectList is not be implemented");
+    }
+
+    public List<Object> getObjectList(String key, List<Object> defaultValue) {
+        throw new ConfigurationException.NotImplement("getObjectList is not be implemented");
+    }
+
+    public DesiredCapabilities getDesiredCapabilities(String browserName) {
+
+        String path = Const.BROWSER_CONFIG_DIR + browserName + ".properties";
+
+        Properties properties = ConfigurationHelper.load(path);
+
+        String version = getString(Const.BROWSER_VERSION, Const.DEFAULT_BROWSER_VERSION);
+        String platform = getString(Const.BROWSER_PLATFORM, Const.DEFAULT_BROWSER_PLATFORM);
+
+        DesiredCapabilities caps = new DesiredCapabilities(browserName, version, Platform.fromString(platform));
+        for (Object key: properties.keySet()) {
+            caps.setCapability((String)key, properties.get(key));
+        }
+
+        return caps ;
+    }
+
+    public String getBrowserName() {
+        return getString(Const.BROWSER_NAME, Const.DEDAULT_BROWSER_NAME);
+    }
 
     public String getString(String key) {
         throw new ConfigurationException.NotImplement("getString is not be implemented");
@@ -68,11 +112,11 @@ public class AbstractConfiguration implements Configuration {
         return getAndConvert(Integer.class, key, defaultValue);
     }
 
-    public List<?> getList(String key) {
+    public List<String> getStringList(String key) {
         throw new ConfigurationException.NotImplement("getList is not be implemented");
     }
 
-    public List<?> getList(String key, List<?> defaultValue) {
+    public List<String> getStringList(String key, List<String> defaultValue) {
         throw new ConfigurationException.NotImplement("getList is not be implemented");
     }
 
@@ -114,7 +158,7 @@ public class AbstractConfiguration implements Configuration {
 
 
 
-    static final ImmutableMap<Class<?>, Converter<String, ?>> map =
+    private static final ImmutableMap<Class<?>, Converter<String, ?>> map =
             new ImmutableMap.Builder<Class<?>, Converter<String, ?>>()
                     .put(Integer.class, Ints.stringConverter())
                     .put(Long.class, Longs.stringConverter())
@@ -125,11 +169,12 @@ public class AbstractConfiguration implements Configuration {
                     .build();
 
     private <T> T convert(Class<T> type, String value) {
-        T r = null;
+        T r;
         try {
             Converter<String, T> converter = (Converter<String, T>) map.get(type);
             checkState(converter != null, "Can't find converter for class: " + type.getName());
             r = converter.convert(value);
+            return r;
         }
         catch (NumberFormatException e) {
             throw new ConfigurationException.ConvertFail(e.getMessage());
@@ -137,7 +182,7 @@ public class AbstractConfiguration implements Configuration {
         catch (Throwable t) {
             Throwables.propagate(t);
         }
-        return r;
+        throw new ConfigurationException.ConvertFail("Cant convert for value: " + value);
     }
 
     private <T> T getAndConvert(Class<T> type, String key) {
@@ -151,13 +196,13 @@ public class AbstractConfiguration implements Configuration {
         T r = null;
         try {
             String value = getString(key);
-            r = convert(type, value);
+            return convert(type, value);
         } catch (ConfigurationException.Missing e){
             return defaultValue;
         }
         catch (Throwable t) {
             Throwables.propagate(t);
         }
-        return r;
+        return defaultValue;
     }
 }

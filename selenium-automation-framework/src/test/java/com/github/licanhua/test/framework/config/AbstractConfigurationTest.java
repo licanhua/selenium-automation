@@ -47,7 +47,7 @@ public class AbstractConfigurationTest {
 
     @Test(expected=ConfigurationException.NotImplement.class)
     public void testGetListNotImplementException() {
-        abstractConfiguration.getList("0.123F");
+        abstractConfiguration.getStringList("0.123F");
     }
 
     @Test

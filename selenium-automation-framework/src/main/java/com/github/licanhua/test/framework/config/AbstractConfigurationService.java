@@ -18,6 +18,7 @@
 package com.github.licanhua.test.framework.config;
 
 import org.apache.log4j.Logger;
+import org.junit.runner.Description;
 
 /**
  * @author Canhua Li
@@ -27,13 +28,15 @@ public abstract class AbstractConfigurationService  implements ConfigurationServ
     private static final Logger logger = Logger.getLogger(AbstractConfigurationService.class.getName());
 
     Configuration configuration;
-    public Configuration createConfigurationFromContext(String context) {
+
+    public Configuration createConfiguration(Description testDescription) {
+        String context = testDescription.getTestClass().getCanonicalName();
         logger.info("create configuration from context: " + context);
-        configuration = createConfiguration(context);
+        configuration = createConfigurationFromDescription(testDescription);
 
         logger.info("configuration: " + context + " is created");
         return configuration;
     }
 
-    abstract Configuration createConfiguration(String context);
+    protected abstract Configuration createConfigurationFromDescription(Description description);
 }

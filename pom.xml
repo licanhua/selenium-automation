@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.licanhua.test</groupId>
 	<artifactId>selenium-automation-parent</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>selenium automation framework parent</name>
     <description>
@@ -91,7 +91,8 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
-		</dependencies>
+
+        </dependencies>
 	</dependencyManagement>
     <build>
         <plugins>

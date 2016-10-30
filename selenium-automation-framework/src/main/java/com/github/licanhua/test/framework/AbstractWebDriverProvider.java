@@ -43,7 +43,7 @@ public abstract class AbstractWebDriverProvider implements WebDriverProvider {
     private static String TEST_OUT = "./testOutput/";
     private static String driverTimeStamp;
     private String testName;
-    int snapCount = 0;
+    private int snapCount = 0;
 
     static {
         SimpleDateFormat sdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -52,25 +52,13 @@ public abstract class AbstractWebDriverProvider implements WebDriverProvider {
 
     private static final Logger logger = Logger.getLogger(AbstractWebDriverProvider.class.getName());
 
-    public static DesiredCapabilities createCapabilities(String browserName) {
-        String browserConfigPrefix = "config/browser/";
-
-        Properties properties = ConfigurationHelper.load(browserConfigPrefix + browserName + ".ini");
-        DesiredCapabilities caps = new DesiredCapabilities();
-        for (Object key: properties.keySet()) {
-            caps.setCapability((String)key, properties.get(key));
-        }
-
-        return caps;
-    }
-
     public WebDriverContext createWebDriver(String context, Configuration configuration) {
         logger.info("create webDriver for " + context);
         testName = context;
 
-        AutomationConfig automationConfig = AutomationConfig.getAutomationConfig();
+        AutomationConfig automationConfig = AutomationConfig.createAutomationConfig(configuration);
 
-        DesiredCapabilities desiredCapabilities = createCapabilities(automationConfig.getBrowserName());
+        DesiredCapabilities desiredCapabilities = configuration.getDesiredCapabilities(automationConfig.getBrowserName());
         logger.info("creating WebDriver: " + desiredCapabilities.toString());
         WebDriver webDriver = createWebDriver( automationConfig, desiredCapabilities);
         logger.info("WebDriver is created");

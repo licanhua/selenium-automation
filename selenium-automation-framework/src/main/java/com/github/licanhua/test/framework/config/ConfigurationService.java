@@ -17,9 +17,16 @@
 
 package com.github.licanhua.test.framework.config;
 
+import org.junit.runner.Description;
+
 /**
  * @author Canhua Li
  */
 public interface ConfigurationService {
-    Configuration createConfigurationFromContext(String context);
+    /*
+     * @Param testDescription {@link Description }
+     * @Return a new {@link Configuration}
+     */
+    Configuration createConfiguration(Description testDescription);
+
 }
