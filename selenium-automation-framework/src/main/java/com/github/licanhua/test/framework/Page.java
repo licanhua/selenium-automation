@@ -18,6 +18,7 @@
 package com.github.licanhua.test.framework;
 
 import com.github.licanhua.test.framework.base.*;
+import com.github.licanhua.test.framework.config.Configuration;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebElement;
 
@@ -91,6 +92,10 @@ public class Page extends AbstractElement {
 
         public ElementContext getElementContext() {
             return elementContext;
+        }
+
+        public Configuration getConfiguration() {
+            return elementContext.getConfiguration();
         }
 
         public void setWrappedElement(WebElement wrappedElement) {

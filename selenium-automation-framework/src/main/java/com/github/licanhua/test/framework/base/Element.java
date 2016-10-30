@@ -18,6 +18,7 @@
 package com.github.licanhua.test.framework.base;
 
 import com.github.licanhua.test.framework.Container;
+import com.github.licanhua.test.framework.config.Configuration;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -36,4 +37,6 @@ public interface Element {
     public Element  getParent();
 
     public void setWrappedElement(WebElement wrappedElement);
+
+    public Configuration getConfiguration();
 }

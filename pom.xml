@@ -6,7 +6,7 @@
 	<packaging>pom</packaging>
 	<name>selenium automation framework parent</name>
     <description>
-      Selenium automation framework is not only a automation framework, but also the best practice of using Selenium.
+        Selenium automation framework is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.
     </description>
 	<developers>
 		<developer>
