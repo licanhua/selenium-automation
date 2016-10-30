@@ -67,8 +67,8 @@ public final class AutomationDriver extends TestWatcher {
         this(new TypeSafeConfigurationService(), webDriverProvider);
     }
 
-    Configuration  createConfiguration(String context) {
-        Configuration configuration = configurationService.createConfigurationFromContext(context);
+    Configuration  createConfiguration(Description context) {
+        Configuration configuration = configurationService.createConfiguration(context);
         checkState(configuration != null, "fail to create configuration from context");
         return configuration;
     }
@@ -77,10 +77,17 @@ public final class AutomationDriver extends TestWatcher {
     protected void starting(Description description) {
         super.starting(description);
 
-        String testName = description.getDisplayName();
+        String testName;
+        if(description.isTest()) {
+            testName = description.getTestClass().getName() + "." + description.getMethodName();
+        }
+        else {
+            testName = description.getTestClass().getName();
+        }
+
         logger.info("Test starting: " + testName);
 
-        Configuration configuration = createConfiguration(testName);
+        Configuration configuration = createConfiguration(description);
         WebDriverContext webDriverContext = createWebDriver(testName, configuration);
 
         environmentContext = new EnvironmentContext.EnvironmentContextBuilder()
@@ -115,7 +122,6 @@ public final class AutomationDriver extends TestWatcher {
 
             if (webDriver != null) {
                 webDriver.quit();
-                webDriver = null;
             }
         }
         logger.info("Test finished: " + description.getDisplayName());

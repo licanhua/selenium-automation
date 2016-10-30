@@ -17,17 +17,15 @@
 
 package com.github.licanhua.test.framework.config;
 
+import org.junit.runner.Description;
+
 /**
  * @author Canhua Li
  */
 public class TypeSafeConfigurationService extends AbstractConfigurationService {
-
-    Configuration createConfiguration(final String context) {
-        return new AbstractConfiguration() {
-            @Override
-            public String getString(String key) {
-                throw new ConfigurationException.Missing("can't find for " + context);
-            }
-        } ;
+    @Override
+     protected Configuration createConfigurationFromDescription(Description testDescription) {
+        Configuration configuration =  new TypeSafeConfiguration(testDescription);
+        return new ConfigurationProxy(testDescription, configuration);
     }
 }

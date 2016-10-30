@@ -18,8 +18,8 @@ public class ConfigurationHelper {
      * The name is assumed to be absolute and use "/"  for package segment separation with an
      * optional leading "/" . Thus, the following names refer to the same resource:
      *
-     * /config/automation.ini
-     * config/automation.ini
+     * /config/automation.properties
+     * config/automation.properties
      *
      */
 
