@@ -5,7 +5,10 @@ script: "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && mvn clean deploy --settings tar
 branches:
   except:
     - travis
-
+    
+jdk:
+  - oraclejdk8
+  
 env:
   global:
     - secure: "riBsUgkYG/2xIzVDXdCbpzeyPjKHzW48VHaQpT4X7hciDhqPPsYlsTelR1g0tscSLxL/gqplcCDf6g12IYE6TCUIQSqOtAuPBLNjthTFh7BYwyEfp3XPWGS0Q3h2+Je5XkivSr+kZocO0CzYmXQgsjhrqXuZvsy2p7rkC1CBtD1NSXr8WWV/sy91AKinyyOcc5D6fo8Up+zkYAtLcY6vDLnuQjYg7j7Xnw6EHjMSAO8jF88rYJ3P3V8MaOcT5UqTowZ12BCXvcunHARy4MViCXWt78Fy5wlajCxXE0/CCDOUeCGuJ2IzjBXNWUO3lz8CklIqWIJwO0ybWjMosjO9YRr7bxB4HUah1gSbvLDClnRB5jJHuhvrvDjH5fQDvglTaNfk8GDhCKusGlg5dfvsFKYt8sl0I8RKbwdTr1mQksOrrA9r1Uv2YIK7G56qK3Ve4IpfTfTWhZ4h9MV8qOhy1gM6pjIdYbrNHQ+DVj6kNGuR3hAWrgImW4165d7s3DQnO1Z8aCF1qIWvmBTDGo7ECjkg3PuC7jdc3mRYkb8pAX7Oxjpr9SO9hWgbuzK5PeATrLzqKcS3kA3DO7r6GQJpzNv+owuj2Gfyx+tPOe0gMFVApZnA/y7/wkERuBwX4ap7KIUYxfy6IDk0gLbaxENSfRxwJnd477vldavwv/X/HRQ="
