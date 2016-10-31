@@ -6,11 +6,11 @@ This framework provides a lot of best practice I did in my SDET career. I hope y
 
  1. A nature way to describe a page and its content.
  2. Automatically validate the presence of all elements when creating a page.
- 3. Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification
- 4. Support Ajax element wait internally
- 5. @RelativeElement helps you locate relative elements without any code
- 6. Easy way to describe tables.
- 7. Flexible test data and configuration management
+ 3. Flexible test data and configuration management 
+ 4. Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification
+ 5. Support Ajax element wait internally
+ 6. @RelativeElement helps you locate relative elements without any code
+ 7. Easy way to describe tables.
  8. Select, CheckBox are WebElements.
  9. Make use of @Rule annotation.
  10. Best practice of page navigation.
@@ -101,6 +101,81 @@ By default, when you create a Page, framework automatically help you validate th
     }
 
     
+Flexible test data and configuration management
+--------------
+Framework provides a lot of configuration functions to help you provide test data to test cases. The same get command like **Configuration#getString(key)** would result in different value depends on target environment, test case name, and configuration. This allow us to put prod and integration test data in the same configuration file and configuration service load different data for you depends on test case name, target environment and configuration files.
+
+This framework also supports flexible test data source, framework supports **HOCON**, **JSON** and **properties** format. and even support to extend data source from database to any network resource(Just need implement a ConfigService).
+
+How can we make our test run against different platform and different environment but with different test data without code change. framework introduces two kind of scecrets here:
+
+ - package name of the test cases is used to load the configuration in override mode, if the test case is **com.github.licanhua.test.amazon.HomePageTest#testSearch()**. the following configuration under config/ would be loaded in sequence:
+ 	
+	automation.properties
+	com.conf
+	com.json
+	com.properties
+	com.github.conf
+	com.github.json
+	com.github.properties
+	...
+	com.github.licanhua.test.amazon.HomePageTest.conf
+	com.github.licanhua.test.amazon.HomePageTest.json
+	com.github.licanhua.test.amazon.HomePageTest.properties
+	systemproperties
+	
+If the same key defined in more than two files, the late loaded would overwrite the former. systemproperties has the highest priority. If you run with **-Dbrowsername=firefox**, the final result would be firefox.
+
+ - The same cofiguration.getString(key) would get different value depends on testMethodName, targetEnvironment, Search priority and configuration files.
+
+Before we go forward, let see the following definition:
+
+ 1. **testMethodName**: the current running method name like testSearch in above example.
+ 2. **targetEnvironment**: it's like prod, integration, dev, test   
+ 3. **Search priority**: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.
+ 
+	 ${testMethodName}.${targetEnvironment}.${key}
+	 ${testMethodName}.{key}
+	 ${targetEnvironment}.${key}
+	 ${key}
+ 
+ 4. **Configuration** Files: we make use of package name to load the configuration files. automation.properties has the lowest priority, but System Properties(same as System.getProperties()) has the highest priority. in this way, it allow us to change the parameters dynamically. For example, we can run the same test cases against firefox and chrome by:
+ 	
+	mvn test -DbrowserName=firefox
+	mvn test -DbrowserName=chrome
+    
+If we have a test com.licanhua.Test.demo(). testMethodName is demo. and three configuration will be loaded. I assume all are json files.
+
+	com.json
+	com.licanhua.json
+	com.licanhua.Test.json
+
+If com.licanhua.Test.json is:
+
+	{
+		demo: {
+			prod: {
+				"userName": "demoInProd"
+			}, test: {
+				"userName": "testInProd"
+			}
+		},
+		prod: {
+			"userName": "demo"
+		},
+		"userName": "test",
+		"password": "got it"
+	}
+
+If we call getString("password") from demo method, and targetEnv is prod, we will search password in the following order and finally get '**got it'**
+
+	demo.prod.password
+	demo.password
+	prod.password
+	password
+
+if we search userName, demo.prod.userName is matched and be returned with **demoInProd**
+
 
 Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification
 -------------
@@ -352,82 +427,6 @@ Easy way to describe tables.
 -------------
 In today's project, tables are created dynamically, and often it creates id like 'aria-option-0', 'aria-option-1', 'aria-option-2'. we can make use of @RelativeElement above to achieve this
 see [Examples](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test)
-
-Flexible test data and configuration management
---------------
-Framework provides a lot of configuration functions to help you provide test data to test cases. The same get command like **Configuration#getString(key)** would result in different value depends on target environment, test case name, and configuration. This allow us to put prod and integration test data in the same configuration file and configuration service load different data for you depends on test case name, target environment and configuration files.
-
-This framework also supports flexible test data source, framework supports **HOCON**, **JSON** and **properties** format. and even support to extend data source from database to any network resource(Just need implement a ConfigService).
-
-How can we make our test run against different platform and different environment but with different test data without code change. framework introduces two kind of scecrets here:
-
- - package name of the test cases is used to load the configuration in override mode, if the test case is **com.github.licanhua.test.amazon.HomePageTest#testSearch()**. the following configuration under config/ would be loaded in sequence:
- 	
-	automation.properties
-	com.conf
-	com.json
-	com.properties
-	com.github.conf
-	com.github.json
-	com.github.properties
-	...
-	com.github.licanhua.test.amazon.HomePageTest.conf
-	com.github.licanhua.test.amazon.HomePageTest.json
-	com.github.licanhua.test.amazon.HomePageTest.properties
-	systemproperties
-	
-If the same key defined in more than two files, the late loaded would overwrite the former. systemproperties has the highest priority. If you run with **-Dbrowsername=firefox**, the final result would be firefox.
-
- - The same cofiguration.getString(key) would get different value depends on testMethodName, targetEnvironment, Search priority and configuration files.
-
-Before we go forward, let see the following definition:
-
- 1. **testMethodName**: the current running method name like testSearch in above example.
- 2. **targetEnvironment**: it's like prod, integration, dev, test   
- 3. **Search priority**: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.
- 
-	 ${testMethodName}.${targetEnvironment}.${key}
-	 ${testMethodName}.{key}
-	 ${targetEnvironment}.${key}
-	 ${key}
- 
- 4. **Configuration** Files: we make use of package name to load the configuration files. automation.properties has the lowest priority, but System Properties(same as System.getProperties()) has the highest priority. in this way, it allow us to change the parameters dynamically. For example, we can run the same test cases against firefox and chrome by:
- 	
-	mvn test -DbrowserName=firefox
-	mvn test -DbrowserName=chrome
-    
-If we have a test com.licanhua.Test.demo(). testMethodName is demo. and three configuration will be loaded. I assume all are json files.
-
-	com.json
-	com.licanhua.json
-	com.licanhua.Test.json
-
-If com.licanhua.Test.json is:
-
-	{
-		demo: {
-			prod: {
-				"userName": "demoInProd"
-			}, test: {
-				"userName": "testInProd"
-			}
-		},
-		prod: {
-			"userName": "demo"
-		},
-		"userName": "test",
-		"password": "got it"
-	}
-
-If we call getString("password") from demo method, and targetEnv is prod, we will search password in the following order and finally get '**got it'**
-
-	demo.prod.password
-	demo.password
-	prod.password
-	password
-
-if we search userName, demo.prod.userName is matched and be returned with **demoInProd**
-
 	
 New test data from HOCON, JSON and propertie files
 --------------
