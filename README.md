@@ -1,10 +1,10 @@
 Welcome to Selenium Automation Framework!
 ===================
-**Selenium Automation Framework** Selenium Automation Framework(also call SAF) is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.
+**Selenium Automation Framework** Selenium Automation Framework(SAF) is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.
 
-This framework provides:
+This framework provides a lot of best practice I did in my SDET career. I hope you can benefit from it and learn from it even if you don't use the framework. The practices includes but not limit to:
 
- 1.  A nature way to describe a page and its content.
+ 1. A nature way to describe a page and its content.
  2. Automatically validate the presence of elements when creating a page.
  3. Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification
  4. Support Ajax element wait internally
@@ -21,7 +21,24 @@ This framework provides:
  15. No PageFactory any more.
  16. New test data from HOCON, JSON and propertie files
 
-A nature way to describe a page and its content.
+# Dependency
+
+	<dependency>
+		<groupId>com.github.licanhua.test</groupId>
+		<artifactId>selenium-automation-framework</artifactId>
+		<version>0.1.2</version>
+	</dependency>
+
+# Examples
+[Amazon Search Diaper example](https://github.com/licanhua/selenium-automation-showcase/tree/master/src/test/java/com/github/licanhua/test/showcase/amazon/test)
+
+[Expedia car search example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/expedia)
+
+[Datatables example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test)
+
+# Best practices
+
+## A nature way to describe a page and its content.
 -------------
 Do you follow PageObjects pattern to design your test case? if yes, you already have a good start. PageFactory helps you inject all WebElement objects for you. That's very cool, but it's hard to describe a complex homepage. If we describe a homepage in nature language, it should like this:
 
@@ -401,4 +418,17 @@ Any time you can get the configuration by getConfiguration()
 		}
 	}
 	
-	
+Thanks
+-------------
+Thanks to my wife and my mother, they helped to take care of the kids and let me have two weeks of time to make this tool ready to use.
+
+Author
+--------------
+Canhua Li
+
+Linkedin: https://www.linkedin.com/in/licanhua
+
+Lovely link: https://licanhua.github.io/selenium-automation/
+
+github: https://github.com/licanhua
+
