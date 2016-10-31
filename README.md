@@ -1,16 +1,16 @@
 Welcome to Selenium Automation Framework!
 ===================
-**Selenium Automation Framework** Selenium Automation Framework(SAF) is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.
+**Selenium Automation Framework** Selenium Automation Framework is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.
 
 This framework provides a lot of best practice I did in my SDET career. I hope you can benefit from it and learn from it even if you don't use the framework. The practices includes but not limit to:
 
  1. A nature way to describe a page and its content.
- 2. Automatically validate the presence of elements when creating a page.
+ 2. Automatically validate the presence of all elements when creating a page.
  3. Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification
  4. Support Ajax element wait internally
- 5. @RelativeElement helps you locate relative elements without code
+ 5. @RelativeElement helps you locate relative elements without any code
  6. Easy way to describe tables.
- 7. New test data and configuration management	
+ 7. Flexible test data and configuration management
  8. Select, CheckBox are WebElements.
  9. Make use of @Rule annotation.
  10. Best practice of page navigation.
@@ -46,7 +46,7 @@ Do you follow PageObjects pattern to design your test case? if yes, you already 
     - header provides account management, language ...
     - navigation page includes flight, hotel, car ...
    
-This framework provides a nature way to organize and describe your Pages. This framework hide you from PageObjects and PageFactory. You can describe a object with a WebElement, but you can also group a lot of WebElement into a Container. A Page can includes any number of Containers, and a container can includes other contains of any WebElements. This framework helps you create the cascading of Page Objects in a Page no matter its inside is WebElement or a Container or Page. So the framework enables you to describe the homepage like this:
+This framework provides a nature way to organize and describe your Pages. This framework hide you from PageObjects and PageFactory. You can describe a object with a WebElement, but you can also group a lot of WebElement into a Container. A Page can includes any number of Containers, and a container can includes other containers of any WebElements. This framework helps you create the cascading of Page Objects in a Page no matter its inside is WebElement or a Container or Page. So the framework enables you to describe the homepage like this:
 
     HomePage 
 		    - Header
@@ -86,7 +86,7 @@ After you defined **Header** and **Navigation**, you could treat them as **WebEl
 
 Automatically validate the presence of elements when creating a page.
 -------------
-By default, when you create a Page, framework automatically help you validate the presence of its content. Like below example, when you `HomePage page = new HomePage()`, framework helps you wait until **nav** is existing or timeout. When you use the page object, nav and all other elements belongs to nav in in HomePage is ready for you to use except footer. framework validate all elements until you annotate a element with `@OptionalElement` or you annotate a class with `@AutoValidation(false)`. Exception would be thrown if validation fails.
+By default, when you create a Page, framework automatically help you validate the presence of its content. Like below example, when you `HomePage page = new HomePage()`, framework helps you wait until **nav** is existing or timeout. When you use the page object, nav and all other elements belongs to nav in in HomePage is ready for you to use except footer because footer is marked optional. framework validate all elements unless you annotate the element with `@OptionalElement` or you annotate a class with `@AutoValidation(false)`. Exception would be thrown if validation fails.
 
     public class HomePage extends Page {
         @FindBy(id="wizard-theme-wrapper")
@@ -353,29 +353,56 @@ Easy way to describe tables.
 In today's project, tables are created dynamically, and often it creates id like 'aria-option-0', 'aria-option-1', 'aria-option-2'. we can make use of @RelativeElement above to achieve this
 see [Examples](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test)
 
-
-New test data and configuration management
+Flexible test data and configuration management
 --------------
-In order to support flex test data source, framework supports **HOCON**, **JSON** and **properties** format. and even support to extend data source from database to any network resource(Just need implement a ConfigService).
+Framework provides a lot of configuration functions to help you provide test data to test cases. The same get command like **Configuration#getString(key)** would result in different value depends on target environment, test case name, and configuration. This allow us to put prod and integration test data in the same configuration file and configuration service load different data for you depends on test case name, target environment and configuration files.
+
+This framework also supports flexible test data source, framework supports **HOCON**, **JSON** and **properties** format. and even support to extend data source from database to any network resource(Just need implement a ConfigService).
+
+How can we make our test run against different platform and different environment but with different test data without code change. framework introduces two kind of scecrets here:
+
+ - package name of the test cases is used to load the configuration in override mode, if the test case is **com.github.licanhua.test.amazon.HomePageTest#testSearch()**. the following configuration under config/ would be loaded in sequence:
+ 	
+	automation.properties
+	com.conf
+	com.json
+	com.properties
+	com.github.conf
+	com.github.json
+	com.github.properties
+	...
+	com.github.licanhua.test.amazon.HomePageTest.conf
+	com.github.licanhua.test.amazon.HomePageTest.json
+	com.github.licanhua.test.amazon.HomePageTest.properties
+	systemproperties
+	
+If the same key defined in more than two files, the late loaded would overwrite the former. systemproperties has the highest priority. If you run with **-Dbrowsername=firefox**, the final result would be firefox.
+
+ - The same cofiguration.getString(key) would get different value depends on testMethodName, targetEnvironment, Search priority and configuration files.
 
 Before we go forward, let see the following definition:
 
- 1. **testMethodName**: the current running method name like testValidInput.
+ 1. **testMethodName**: the current running method name like testSearch in above example.
  2. **targetEnvironment**: it's like prod, integration, dev, test   
  3. **Search priority**: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.
-	  ${testMethodName}.${targetEnvironment}.${key}
-	  ${testMethodName}.{key}
-	  ${targetEnvironment}.${key}
+ 
+	 ${testMethodName}.${targetEnvironment}.${key}
+	 ${testMethodName}.{key}
+	 ${targetEnvironment}.${key}
 	 ${key}
- 4. **Configuration** Files: if your testMethodName package is a.b.c.d, then framework will search all the configurations *a.(json, conf, properties)*, *a.b.(json, conf, properties)*, *a.b.c.(json, conf, properties)*, *a.b.c.d.(json, conf, properties)*. If we defined the same key in multiple files, the later will overwrite the before ones.    
+ 
+ 4. **Configuration** Files: we make use of package name to load the configuration files. automation.properties has the lowest priority, but System Properties(same as System.getProperties()) has the highest priority. in this way, it allow us to change the parameters dynamically. For example, we can run the same test cases against firefox and chrome by:
+ 	
+	mvn test -DbrowserName=firefox
+	mvn test -DbrowserName=chrome
     
-For example, we have a test com.licanhua.Test.demo(). testMethodName is demo. and three configuration will be loaded. I assume all are json files.
+If we have a test com.licanhua.Test.demo(). testMethodName is demo. and three configuration will be loaded. I assume all are json files.
 
 	com.json
 	com.licanhua.json
 	com.licanhua.Test.json
 
-If com.licanhua.Test.json like:
+If com.licanhua.Test.json is:
 
 	{
 		demo: {
@@ -400,6 +427,7 @@ If we call getString("password") from demo method, and targetEnv is prod, we wil
 	password
 
 if we search userName, demo.prod.userName is matched and be returned with **demoInProd**
+
 	
 New test data from HOCON, JSON and propertie files
 --------------
@@ -417,14 +445,23 @@ Any time you can get the configuration by getConfiguration()
 			loginAs(name, password);
 		}
 	}
-	
+
+Advance Features (TBD)
+----------------
+A lot of advance features is available to use but still lack of document. they includes:
+ - drive more than two same type of browser in testing
+ - Integrate with Selenium Grid
+ - Custom configuration service. 
+
 Thanks
 -------------
 Thanks to my wife and my mother, they helped to take care of the kids and let me have two weeks of time to make this tool ready to use.
 
 Author
 --------------
-Canhua Li
+Canhua Li 
+
+Email: licanhua@live.com
 
 Linkedin: https://www.linkedin.com/in/licanhua
 
