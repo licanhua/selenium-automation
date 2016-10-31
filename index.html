@@ -22,69 +22,52 @@
       <h1>
 <a id="welcome-to-selenium-automation-framework" class="anchor" href="#welcome-to-selenium-automation-framework" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to Selenium Automation Framework!</h1>
 
-<p><strong>Selenium automation framework</strong> is not only a java automation framework, but also the best practice of using Selenium.
-I used selenium for years. A lot of reason to love him, but a lot of reason to hate him. This integrates a lots of selenium good practice to framework and provide you with reusable component. I listed a lot of <strong>A new way</strong> here. If you are impressed by any of them, please just down it and try it. Buy me a beer if you love it.</p>
+<p><strong>Selenium Automation Framework</strong> Selenium Automation Framework(also call SAF) is not only a test automation framework, but also the best practice of using Selenium for automation testing. It provides nature way describe your web pages, and provides a lot of handy features to release you from the framework development. You can apply a lot of best practices of Selenium testing in one minute.</p>
 
 <p>This framework provides:</p>
 
-<ul>
-<li>A new way to describe and organize you pages.</li>
-<li>A new way you don't need to validate elements' presence when creating a page.</li>
-<li>A new way to run test against different browser like IE, Chrome, Firefox and even Selenium Grid</li>
-<li>A new way to use Select, Checkbox and RadioButton.</li>
-<li>A new way to handle navigation.
-...</li>
-</ul>
+<ol>
+<li> A nature way to describe a page and its content.</li>
+<li>Automatically validate the presence of elements when creating a page.</li>
+<li>Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification</li>
+<li>Support Ajax element wait internally</li>
+<li>@RelativeElement helps you locate relative elements without code</li>
+<li>Easy way to describe tables.</li>
+<li>New test data and configuration management<br>
+</li>
+<li>Select, CheckBox are WebElements.</li>
+<li>Make use of <a href="https://github.com/Rule" class="user-mention">@Rule</a> annotation.</li>
+<li>Best practice of page navigation.</li>
+<li>Simple clickSubmit</li>
+<li>Snapshot</li>
+<li>Don't call findElement(s) directly any more</li>
+<li>Avoid fluent wait and sleep to wait for WebElement </li>
+<li>No PageFactory any more.</li>
+<li>New test data from HOCON, JSON and propertie files</li>
+</ol>
 
 <h2>
-<a id="a-new-way-to-describe-and-organize-your-pages" class="anchor" href="#a-new-way-to-describe-and-organize-your-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to describe and organize your pages.</h2>
+<a id="a-nature-way-to-describe-a-page-and-its-content" class="anchor" href="#a-nature-way-to-describe-a-page-and-its-content" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A nature way to describe a page and its content.</h2>
 
-<p>Do you follow PageObjects pattern? if yes, you already have a good start. Can you help to describe home <a href="http://www.expedia.com">www.expedia.com</a>? If we describe it in nature language, it should like this:</p>
+<p>Do you follow PageObjects pattern to design your test case? if yes, you already have a good start. PageFactory helps you inject all WebElement objects for you. That's very cool, but it's hard to describe a complex homepage. If we describe a homepage in nature language, it should like this:</p>
 
-<pre><code>A HomePage includes a header, a navigation page, a search component, Deals, and footer.
+<pre><code>A HomePage includes a header, a navigation page, a lot of components and footer.
 - header provides account management, language ...
 - navigation page includes flight, hotel, car ...
-- search includes pickup location, dropoff location ...
-- deals includes ...
 </code></pre>
 
-<p>In the old way, because java doesn't support multiple inheritance, we may describe it like this:</p>
+<p>This framework provides a nature way to organize and describe your Pages. This framework hide you from PageObjects and PageFactory. You can describe a object with a WebElement, but you can also group a lot of WebElement into a Container. A Page can includes any number of Containers, and a container can includes other contains of any WebElements. This framework helps you create the cascading of Page Objects in a Page no matter its inside is WebElement or a Container or Page. So the framework enables you to describe the homepage like this:</p>
 
-<pre><code>class HeaderPage {
-    @Findby(id="account")
-    WebElement accountManagement;
-}
-
-class NavigationPage extends HeaderPage {
-    @FindBy(id="flight")
-    WebElement flight;
-}
-class HomePage extends NavigationPage {
-}
+<pre><code>HomePage 
+        - Header
+            - account management
+            - language
+        - Navigation
+            - car
+            - flight
 </code></pre>
 
-<p>As a workaround, we may describe it like this:</p>
-
-<pre><code>class HeaderPage{}
-class NavigationPage{}
-class HomePage{}
-</code></pre>
-
-<p>But in order to verify if all WebElement is present in homepage, we need to verify all Page separately:</p>
-
-<pre><code>HeaderPage header = new HeadPage();
-NavigationPage nav = new NavigationPage();
-HomePage homePage = new HomePage();
-verify(header);
-verify(nav);
-verify(homePage);
-</code></pre>
-
-<p>And from HomePage itself, it's hard to know which Pages are subPages in HomePage.</p>
-
-<p>This framework provides a nature way to organize and describe your Pages.</p>
-
-<p><strong>New Code Sample</strong></p>
+<p>Here we express the relations in code:</p>
 
 <pre><code>class Header extends Container{
     @Findby(id="account")
@@ -95,6 +78,7 @@ class Navigation extends Container{
     @FindBy(id="flight")
     WebElement flight;
 }
+
 class HomePage extends Page{
     @FindBy(id="head")
     Header head;
@@ -102,60 +86,23 @@ class HomePage extends Page{
     @FindBy(id="nav")
     Navigation nav;
 }
+
+class HomePageTest {
+    @Test
+    public void testHomePage() {
+        HomePage homepage = new HomePage();
+    }
+}
 </code></pre>
 
-<p>Do you see the difference? Bingo, Framework introduced Container class, and now you can use <strong>Header</strong> and <strong>Navigation</strong> just the same way as <strong>WebElement</strong>. Navigation and Header will be a reusable component and be used by more pages. If you need it, just define it in your page and add FindBy just like a WebElement, framework will help you do the left.</p>
+<p>After you defined <strong>Header</strong> and <strong>Navigation</strong>, you could treat them as <strong>WebElement</strong>. When you need the homepage, just <strong>new HomePage()</strong>. Framework would inject nav, header for you and everything is ready to use. No need to think about PageObject and PageFactory any more.</p>
 
 <h2>
-<a id="a-new-way-you-dont-need-to-validate-elements-presence-when-creating-a-page" class="anchor" href="#a-new-way-you-dont-need-to-validate-elements-presence-when-creating-a-page" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need to validate elements' presence when creating a page.</h2>
+<a id="automatically-validate-the-presence-of-elements-when-creating-a-page" class="anchor" href="#automatically-validate-the-presence-of-elements-when-creating-a-page" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Automatically validate the presence of elements when creating a page.</h2>
 
-<p>If your HomePage only have one mandatory nav WebElement, Have you written this code:</p>
+<p>By default, when you create a Page, framework automatically help you validate the presence of its content. Like below example, when you <code>HomePage page = new HomePage()</code>, framework helps you wait until <strong>nav</strong> is existing or timeout. When you use the page object, nav and all other elements belongs to nav in in HomePage is ready for you to use except footer. framework validate all elements until you annotate a element with <code>@OptionalElement</code> or you annotate a class with <code>@AutoValidation(false)</code>. Exception would be thrown if validation fails.</p>
 
-<pre><code>public class HomePage{
-    @FindBy(id="wizard-theme-wrapper")
-    WebElement nav;
-
-    @FindBy(id="footer")
-    WebElement footer;
-
-   public boolean isDisplayed() {
-        try {
-            return nav.isDisplayed();
-        } catch (final NoSuchElementException e) {
-            return false;
-        } catch (final StaleElementReferenceException e)
-        {
-            return false;
-        }
-    }
-
-    public doSearch() {
-        nav.toCarSearchPage();
-    }
-}   
-
-public class HomePageTest {
-   @Test
-   public void homePageTest () {
-        HomePage page = PageFactory.initElements(driver, HomePage.class);
-        Wait&lt;WebDriver&gt; wait = new WebDriverWait(webDriver, 100);
-        wait.until(new ExpectedCondition&lt;Boolean&gt;() {
-            public Boolean apply(final WebDriver webDriver) {
-                return homePage.isDisplayed();
-            }
-        });
-
-        page.doSearch();
-    }
-}   
-</code></pre>
-
-<p>You are not the only one. I wrote tons of this kind of test cases before. Now you don't need to do it any more.</p>
-
-<p><strong>New Code Sample</strong></p>
-
-<pre><code>@AutoValidation
-public class HomePage extends Page {
+<pre><code>public class HomePage extends Page {
     @FindBy(id="wizard-theme-wrapper")
     Navigation nav;
 
@@ -166,38 +113,21 @@ public class HomePage extends Page {
         nav.toCarSearchPage();
     }
 }
-
-public class HomePageTest {
-   @Test
-   public void homePageTest () {
-       HomePage page = new HomePage();
-       page.doSearch();
-   }
-}
 </code></pre>
 
-<p>Very simple, right? Just add @AutoValidation to your test Page class, and add @OptionalElement to skip the Element you don't want to auto validate its presence. Even more, you can remove @AutoValidation, by default, the framework helps you verify that all elements should exists when you <strong>new HomePage()</strong>.</p>
-
 <h2>
-<a id="a-new-way-to-run-test-against-different-browser-like-ie-chrome-firefox-and-even-selenium-grid" class="anchor" href="#a-new-way-to-run-test-against-different-browser-like-ie-chrome-firefox-and-even-selenium-grid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to run test against different browser like IE, Chrome, Firefox and even Selenium Grid</h2>
+<a id="same-testcase-can-be-run-against-different-browser-like-ie-chrome-firefox-and-even-selenium-grid-without-modification" class="anchor" href="#same-testcase-can-be-run-against-different-browser-like-ie-chrome-firefox-and-even-selenium-grid-without-modification" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Same testcase can be run against different browser like IE, Chrome, Firefox and even Selenium Grid without modification</h2>
 
-<p>Do you want to make your test case run against IE, Chrome, Firefox and Selenium Grid without any modification? Don’t assume that driver will be an instance of FireFoxDriver or InternetExplorerDriver only. maybe It’s quite easy for you to create a small framework around selenium. Now it's ready for you to use.
-Just change the configuration in <strong>config/automation.properties</strong> to the browser you need. we support Firefox, Chrome, IE to run locally and any browser Remotely.</p>
+<p>Don’t assume that driver will be an instance of FireFoxDriver or InternetExplorerDriver only. maybe It’s quite easy for you to create a small framework around selenium to support any browser. Now it's ready for you to use.
+Just change the configuration in <strong>config/automation.properties</strong> to the browser you need. we support Firefox, Chrome, IE to run locally and any browser with a remoteWebDriverAddress.</p>
 
 <pre><code>browserName=chrome
-waitDurationInSeconds=60
 remoteWebDriverAddress=
 </code></pre>
 
-<p>If you use mvn to do the test, you can even changed the behaviour dynamically by <strong>mvn test -DbrowserName=firefox</strong>.
-If you need run against RemoteWebDriver like Selenium Grid, all you  need to do is define a remoteWebDriverAddress. framework would do the left work for you. eg:</p>
+<p>System properties take priority over configuration file. If you use mvn to do the test, you can change the behaviour dynamically by <strong>-DbrowserName=firefox -DRemoteWebDriver =http://localhost:4444/wd/hub</strong>.</p>
 
-<pre><code>browserName=chrome
-waitDurationInSeconds=60
-remoteWebDriverAddress=http://localhost:4444/wd/hub
-</code></pre>
-
-<p>If you want to talk to Remote WebDriver and want different DesiredCapabilities, just defined a config file in config/${browserName}.properties. Framework would load this file automatically and negotiate with remote webdriver. Here is an example for firefox</p>
+<p>If you want to talk to Remote WebDriver and want different DesiredCapabilities, just defined a config file in <code>config/browser/${browserName}.properties</code>. Framework would load this file automatically and negotiate with remote webdriver. Here is an example for firefox.</p>
 
 <pre><code>config/browser/firefox.properties
     browserName=firefox
@@ -208,9 +138,9 @@ remoteWebDriverAddress=http://localhost:4444/wd/hub
 </code></pre>
 
 <h2>
-<a id="a-new-way-to-handle-ajax-pages" class="anchor" href="#a-new-way-to-handle-ajax-pages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to handle Ajax pages</h2>
+<a id="support-ajax-element-wait-internally" class="anchor" href="#support-ajax-element-wait-internally" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support Ajax element wait internally</h2>
 
-<p>How many times we use FluentWait to wait for a ajax page in our test cases. Do you ever use org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory. now framework makes it very simple and you need to do nothing. By default, all WebElement are initialized with AjaxElementLocatorFactory. If you are using ajaxElement like ajaxElement.click() and the element doesn't exist, it would wait for this element until it timeouts.</p>
+<p>How many times we use FluentWait to wait for a ajax element is ready for you in our test cases. Do you ever use <code>org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory</code>. Now framework makes it very simple and you need to do nothing. By default, all WebElement are initialized with <code>AjaxElementLocatorFactory</code>. If you are using ajaxElement like ajaxElement.click() and the element doesn't exist, it would wait the presence of this element until it timeouts.</p>
 
 <pre><code>public class HomePage {
     @FindBy(id="ajax")
@@ -223,71 +153,17 @@ remoteWebDriverAddress=http://localhost:4444/wd/hub
 }
 </code></pre>
 
-<p>If you want to use implicit wait and fail immediately if no element is present, you just add @AjaxEnabled(false) to your class.</p>
+<p>If you want to use implicit wait and fail immediately if no element is present, you just add <code>@AjaxEnabled(false)</code> to your class.</p>
 
 <pre><code>@AjaxEnabled(false)
 public class HomePage {
-    @FindBy(id="ajax")
-    @OptionalElement
-    WebElement ajaxElement;
-
-    public void doSomething() {
-        ajaxElement.click();
-    }
 }
 </code></pre>
 
 <h2>
-<a id="a-new-way-you-dont-need-to-call-findelements-any-more" class="anchor" href="#a-new-way-you-dont-need-to-call-findelements-any-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need to call findElement(s) any more</h2>
+<a id="select-checkbox-are-webelements" class="anchor" href="#select-checkbox-are-webelements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Select, CheckBox are WebElements.</h2>
 
-<p>I think we have two scenarios we need call findElement by yourself. One is for things like Select and RadioButton. You may have this code:</p>
-
-<pre><code>Select foo = new Select(sDriver.findElement(By.id("foo")));
-foo.selectByValue("myValue");
-</code></pre>
-
-<p>Please use SelectBox and make it OptionalElement if it's dynamically created.</p>
-
-<pre><code>public class HomePage {
-    @FindBy(id="ajax")
-    @OptionalElement
-    SelectBox select;
-
-    public void doSomething() {
-       select.selectByIndex(10);
-    }
-}
-</code></pre>
-
-<p>Another one is find element relative to other element. Please use Container(see details in 'A new way to describe tables.')</p>
-
-<h2>
-<a id="a-new-way-to-use-select-checkbox-and-radiobutton" class="anchor" href="#a-new-way-to-use-select-checkbox-and-radiobutton" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to use Select, Checkbox and RadioButton.</h2>
-
-<p>Have you written this test case?</p>
-
-<pre><code>public class DemoPage{
-    @FindBy(id="selectdemo")
-    WebElement selectElement;
-
-    @FindBy(id="checkboxDemo")
-    WebElement checkBoxElement;
-
-    public void selectByValue(String value) {
-        new Select(selectElement).selectByValue(value);
-    }
-
-    public void check() {
-        if (!checkBoxElement.isSelected()) {
-            checkBoxElement.click();
-        }
-    }
-}
-</code></pre>
-
-<p>Today you can treat Select and CheckBox just as WebElement, and you don't need to create a new Select() any more.</p>
-
-<p><strong>New Code Sample</strong></p>
+<p>You don't need do special handle for Select and CheckBox anymore. SelectBox and CheckBox is ready for you to use just like a normal WebElement.</p>
 
 <pre><code>public class DemoPage{
     @FindBy(id="selectdemo")
@@ -307,41 +183,22 @@ foo.selectByValue("myValue");
 </code></pre>
 
 <h2>
-<a id="a-new-way-to-use-rule-annotation" class="anchor" href="#a-new-way-to-use-rule-annotation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to use <a href="https://github.com/Rule" class="user-mention">@Rule</a> annotation.</h2>
+<a id="make-use-of-rule-annotation" class="anchor" href="#make-use-of-rule-annotation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Make use of <a href="https://github.com/Rule" class="user-mention">@Rule</a> annotation.</h2>
 
-<p>If you never use <a href="https://github.com/Rule" class="user-mention">@Rule</a>, I suggest you google it. It's worth your time to learn it and use it in your test framework.
-In the old ways, I always write this kind of test case</p>
+<p>If you never use <a href="https://github.com/Rule" class="user-mention">@Rule</a>, I suggest you google it. It's worth your time to learn it and use it in your test framework. Now write automation is very easy, just add </p>
 
-<pre><code>class DemoTest {
-    private WebDriver driver;
-
-    @Setup
-    public void setup() {
-        ProfilesIni allProfiles = new ProfilesIni();
-        FirefoxProfile profile = allProfiles.getProfile("selenium");
-        WebDriver driver = FirefoxDriver(profile);
-    }
-
-    @Test
-    public void demoTest() {
-        driver.navigate().to("https://www.amazon.com")
-        HomePage homePage = new HomePage();
-        // homePage.initElements(driver);
-        // homePage.waitForSomething();
-        homePage.toCarSearchPage();
-    }
-}
+<pre><code>@Rule
+public AutomationDriver driver = new AutomationDriver();
 </code></pre>
 
-<p><strong>New Code Sample</strong></p>
+<p>in your test cases, Selenium automation framework is automatically launched for you. </p>
 
 <pre><code>class DemoTest {
     @Rule
-    public AutomationDriver automationDriver = new AutomationDriver();
+    public AutomationDriver driver = new AutomationDriver();
 
     @Test
     public void demoTest() {
-       automationDriver.getWebDriver()..navigate().to("https://www.amazon.com")
         HomePage homePage = new HomePage();
         homePage.toCarSearchPage();
     }
@@ -351,12 +208,10 @@ In the old ways, I always write this kind of test case</p>
 <p><strong>You only need annotate the AutomationDriver with <a href="https://github.com/Rule" class="user-mention">@Rule</a>, automation framework would help you handle all the dirt work</strong></p>
 
 <h2>
-<a id="a-new-way-to-handle-navigation" class="anchor" href="#a-new-way-to-handle-navigation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to handle navigation.</h2>
+<a id="best-practice-of-page-navigation" class="anchor" href="#best-practice-of-page-navigation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Best practice of page navigation.</h2>
 
-<p>If you have tens of Pages, It would be a nightmare to navigate between them. A very good practice is never new Page() in your test cases. I always define a Pages.java to handle all navigation.
-This framework provide PageHelper to help you create new Pages and navigate between them. Only thing you need to know is which Page class you are navigate to.</p>
-
-<p><strong>New Code Sample</strong></p>
+<p>If you have tens of Pages, It would be a nightmare to navigate between them. A very good practice is never new Page() in your test cases. And always define a Pages.java to handle all navigation.
+This framework provide PageHelper to help you create new Pages and navigate between them. Only thing you need to know is which Page class you are navigate to. The new created page is ready for you to use, and it includes all the features framework supports like auto validation, ajax element wait, ...</p>
 
 <pre><code>public class Pages {
     public static HomePage homePage() {
@@ -388,85 +243,103 @@ public class NavigationTest {
 }
 </code></pre>
 
+<p>Do you see the above test cases is very simple? framework does the validation and you handle the navigation.</p>
+
 <h2>
-<a id="a-new-way-to-handle-snapshot" class="anchor" href="#a-new-way-to-handle-snapshot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to handle snapshot</h2>
+<a id="simple-clicksubmit" class="anchor" href="#simple-clicksubmit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Simple clickSubmit</h2>
 
-<p>Have you ever had this clickSubmit() function?</p>
+<p>Have you ever written clickSubmit() function like this before?</p>
 
-<pre><code>public class DemoPage {
-    public void clickSubmit() {
+<pre><code>    public void clickSubmit() {
            // Take snapshot
-            takeSnapshot(elementContext);
-
-            // click the element
-            webElement.click();
-
-            // Wait for Page Load Complete
-            NewPage newPage = new NewPage();
-            newPage.waitFor();
+           // click the element
+           // create new page
+           // wait for new page is ready
+           // validate the new page
         }
+</code></pre>
+
+<p>Today it be more simple, clickAndToPage will help you do everything mentioned above .</p>
+
+<pre><code> clickAndToPage(webElement, NewPage.class);
+</code></pre>
+
+<h2>
+<a id="snapshot" class="anchor" href="#snapshot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Snapshot</h2>
+
+<p>Just define <code>autoSnapshot=true</code>in any configuration file. and use clickAndToPage to click WebElement, snapshot is already taken for you.</p>
+
+<p>There are two kinds of snapshot:
+1, the page source of webpage.  saved as 1-source.html
+2, the screen snapshot.  saved as 1-screenshot.png
+They are created in testOutput like
+testOutput\20161030121459\com.github.licanhua.example.datatables.test.DatatablesTest.datatablesTest
+Test time and test case is as part of the directory.</p>
+
+<h2>
+<a id="dont-call-findelements-directly-any-more" class="anchor" href="#dont-call-findelements-directly-any-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Don't call findElement(s) directly any more</h2>
+
+<p>Why do we need call findElement(s) by ourselves? Maybe because of the following two reason: </p>
+
+<p>One is for things like Select and RadioButton. Selenium don't support it you have to:</p>
+
+<pre><code>Select foo = new Select(sDriver.findElement(By.id("foo")));
+foo.selectByValue("myValue");
+</code></pre>
+
+<p>Please use SelectBox</p>
+
+<pre><code>public class HomePage {
+    @FindBy(id="ajax")
+    SelectBox select;
+
+    public void doSomething() {
+       select.selectByIndex(10);
+    }
 }
 </code></pre>
 
-<p>Today it be more simple, clickAndToPage will help you.</p>
+<p>Another one is find element relative to other element. Please use Container</p>
 
-<p><strong>New Code Sample</strong></p>
+<h2>
+<a id="avoid-fluent-wait-and-sleep-to-wait-for-webelement-" class="anchor" href="#avoid-fluent-wait-and-sleep-to-wait-for-webelement-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Avoid fluent wait and sleep to wait for WebElement </h2>
 
-<pre><code>public class DemoPage extends Page{
-    public void clickSubmit() {
-        clickAndToPage(webElement, NewPage.class);
+<p>One of the good practice is use FluentWait other than Thread.sleep. I want to say avoid fluent too. Ajax element is supported by framework and ajax element is suppose to be ready for use when you create pages.</p>
+
+<p>If you still think it's not enough,  try to use wait functions from <a href="https://github.com/licanhua/selenium-automation/blob/master/selenium-automation-framework/src/main/java/com/github/licanhua/test/framework/base/WaitFunctions.java">WaitFunctions.java</a>.
+Mark the element as <code>@OptionalElement</code>to skip the auto validation.</p>
+
+<pre><code>public class CarSearchPage extends Page {
+    @OptionalElement
+    @FindBy(className="display-group-results")
+    SuggestionSelectComponent suggestionSelectComponent;
+
+    private void fillLocationField(WebElement webElement, String location) {
+        webElement.clear();
+        webElement.sendKeys(location);
+        waitForElementToBeDisplayed(suggestionComponent);
+        suggestionSelectComponent.select(1);
+        waitForElementToBeAbsent(suggestionComponent);
     }
 }
 </code></pre>
 
 <h2>
-<a id="a-new-way-to-not-full-you-test-case-with-fluent-wait-and-avoid-sleep" class="anchor" href="#a-new-way-to-not-full-you-test-case-with-fluent-wait-and-avoid-sleep" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to not full you test case with Fluent wait and avoid sleep</h2>
+<a id="use-startpage-configuration-other-than-webdriver-navigate" class="anchor" href="#use-startpage-configuration-other-than-webdriver-navigate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use startPage configuration other than WebDriver navigate</h2>
 
-<p>We ever avoid Thread.sleep prefer Wait or FluentWait in our test cases, now You don't need to write FluentWait function again and again, and you should have a library to support like below:</p>
+<p>Because selenium need webDrive to navigate and locate element. If you have a Selenium test project, search WebDriver, how many times it occurs? Do we really need it? 
+This framework is hiding WebDriver from you. <strong>startPage</strong> is provided to help you get to the first page. define startPage in any configuration file like below.</p>
 
-<pre><code>public waitForElement(WebElement webElement) {
-    try{
-        Wait&lt;WebDriver&gt; wait = new WebDriverWait(webDriver, 100);
-        wait.until(new ExpectedCondition&lt;Boolean&gt;() {
-            public Boolean apply(final WebDriver webDriver) {
-                try {
-                    element.isDisplayed
-                } catch (final NoSuchElementException e) {
-                    return false;
-                }catch (final StaleElementReferenceException e)
-                {
-                    return false;
-                }
-            }
-        });
-    } catch (TimeoutException e){
-        TimeoutException te = new TimeoutException(message + " timeout!", e);
-        throw te;
-    }
-}
+<pre><code>startPage=https://datatables.net
 </code></pre>
 
-<p>Today you can just use the existing function in your Page object. it supports you wait for WebElement and any Element created by framework or Element you extended from CustomElement. Check WaitFunctions.java to see all the wait functions the framework supports.</p>
+<p>During the start up, framework would automatically navigate you to startpage and waitForPageLoadComplete. If you really want the WebDriver, just call:</p>
 
-<p><strong>New Code Sample</strong></p>
-
-<pre><code>private void fillLocationField(WebElement webElement, String location) {
-    webElement.clear();
-    webElement.sendKeys(location);
-    waitForElementToBeDisplayed(suggestionComponent);
-    suggestionSelectComponent.select(1);
-    waitForElementToBeAbsent(suggestionComponent);
-}
+<pre><code>WebDriver webDriver = this.getElementContext().getWebDriver();
 </code></pre>
 
 <h2>
-<a id="a-new-way-you-dont-need-to-carry-webdriver-everywhere" class="anchor" href="#a-new-way-you-dont-need-to-carry-webdriver-everywhere" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need to carry WebDriver everywhere</h2>
-
-<p>If you have a Selenium test project, if you search WebDriver, how many it includes in your test cases? Do we really need it? This framework is trying to hide WebDriver from you. Framework can deduce webDriver from <strong>Global</strong> space or from parent Page object and inject it into Element. If you really want the WebDriver, just call:
-   WebDriver webDriver = this.getElementContext().getWebDriver();</p>
-
-<h2>
-<a id="a-new-way-you-dont-need-call-pagefactory-any-more" class="anchor" href="#a-new-way-you-dont-need-call-pagefactory-any-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need call PageFactory any more.</h2>
+<a id="no-pagefactory-any-more" class="anchor" href="#no-pagefactory-any-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>No PageFactory any more.</h2>
 
 <p>I don't know how you make PageFactory to initialize a page object. In old days, I always define a parent Page object and it look like this:</p>
 
@@ -487,25 +360,117 @@ public class HomePage extends PageBase {
 }
 </code></pre>
 
-<p>Now this functionality is implement by framework. You simply define you page like this. no constructor(WebDriver webDriver) any more.</p>
-
-<p><strong>New Code Sample</strong></p>
+<p>Now this functionality is implement by framework. You simply define you page like this. </p>
 
 <pre><code>public class HomePage extends Page {
 }
 </code></pre>
 
 <h2>
-<a id="a-new-way-to-describe-tables" class="anchor" href="#a-new-way-to-describe-tables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way to describe tables.</h2>
+<a id="relativeelement-helps-you-locate-relative-elements-without-code" class="anchor" href="#relativeelement-helps-you-locate-relative-elements-without-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>@RelativeElement helps you locate relative elements without code</h2>
 
-<p>In today's project, tables are created dynamically, and often it creates id like 'aria-option-0', 'aria-option-1', 'aria-option-2'.
-see example <a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/framework/datatables">https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/framework/datatables</a></p>
+<p>By default, all @FindBy is search in all the webpage. If we describe the context like Table and Row, we need relative search. just put <strong>@RelativeElement</strong> in your relative element. framework would help you change the SearchContext to it's parent(Here position and office in ExampleRow has change SearchContext to By.className=sorting_1) </p>
+
+<pre><code>public class ExampleRow extends Container {
+    @RelativeElement
+    @FindBy(xpath="./../td[2]")
+    WebElement postition;
+
+    @RelativeElement
+    @FindBy(xpath = "./../td[4]")
+    WebElement office;
+}
+
+public class ExampleTable extends Container {
+    @FindBy(className="sorting_1")
+    List&lt;ExampleRow&gt; rows;
+}   
+</code></pre>
 
 <h2>
-<a id="a-new-way-you-dont-need-to-care-about-configuration-tdb" class="anchor" href="#a-new-way-you-dont-need-to-care-about-configuration-tdb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need to care about configuration. (TDB)</h2>
+<a id="easy-way-to-describe-tables" class="anchor" href="#easy-way-to-describe-tables" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Easy way to describe tables.</h2>
+
+<p>In today's project, tables are created dynamically, and often it creates id like 'aria-option-0', 'aria-option-1', 'aria-option-2'. we can make use of @RelativeElement above to achieve this
+see <a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test">Examples</a></p>
 
 <h2>
-<a id="a-new-way-you-dont-need-to-handle-url-tbd" class="anchor" href="#a-new-way-you-dont-need-to-handle-url-tbd" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A new way you don't need to handle URL. (TBD)</h2>
+<a id="new-test-data-and-configuration-management" class="anchor" href="#new-test-data-and-configuration-management" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>New test data and configuration management</h2>
+
+<p>In order to support flex test data source, framework supports <strong>HOCON</strong>, <strong>JSON</strong> and <strong>properties</strong> format. and even support to extend data source from database to any network resource(Just need implement a ConfigService).</p>
+
+<p>Before we go forward, let see the following definition:</p>
+
+<ol>
+<li>
+<strong>testMethodName</strong>: the current running method name like testValidInput.</li>
+<li>
+<strong>targetEnvironment</strong>: it's like prod, integration, dev, test<br>
+</li>
+<li>
+<strong>Search priority</strong>: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.
+  ${testMethodName}.${targetEnvironment}.${key}
+  ${testMethodName}.{key}
+  ${targetEnvironment}.${key}
+ ${key}</li>
+<li>
+<strong>Configuration</strong> Files: if your testMethodName package is a.b.c.d, then framework will search all the configurations <em>a.(json, conf, properties)</em>, <em>a.b.(json, conf, properties)</em>, <em>a.b.c.(json, conf, properties)</em>, <em>a.b.c.d.(json, conf, properties)</em>. If we defined the same key in multiple files, the later will overwrite the before ones.<br>
+</li>
+</ol>
+
+<p>For example, we have a test com.licanhua.Test.demo(). testMethodName is demo. and three configuration will be loaded. I assume all are json files.</p>
+
+<pre><code>com.json
+com.licanhua.json
+com.licanhua.Test.json
+</code></pre>
+
+<p>If com.licanhua.Test.json like:</p>
+
+<pre><code>{
+    demo: {
+        prod: {
+            "userName": "demoInProd"
+        }, test: {
+            "userName": "testInProd"
+        }
+    },
+    prod: {
+        "userName": "demo"
+    },
+    "userName": "test",
+    "password": "got it"
+}
+</code></pre>
+
+<p>If we call getString("password") from demo method, and targetEnv is prod, we will search password in the following order and finally get '<strong>got it'</strong></p>
+
+<pre><code>demo.prod.password
+demo.password
+prod.password
+password
+</code></pre>
+
+<p>if we search userName, demo.prod.userName is matched and be returned with <strong>demoInProd</strong></p>
+
+<h2>
+<a id="new-test-data-from-hocon-json-and-propertie-files" class="anchor" href="#new-test-data-from-hocon-json-and-propertie-files" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>New test data from HOCON, JSON and propertie files</h2>
+
+<p>Framework use <a href="https://github.com/typesafehub/config">typesafe</a> as configuration reader, so it supports HOCON, JSON and properties. You should define the configuration with ext name with one of them from: <strong>.conf</strong>, <strong>.json</strong> or <strong>.properties</strong></p>
+
+<h2>
+<a id="separate-the-test-data-from-test-code-by-configuration-service" class="anchor" href="#separate-the-test-data-from-test-code-by-configuration-service" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Separate the test data from test code by configuration service.</h2>
+
+<p>Any time you can get the configuration by getConfiguration()</p>
+
+<pre><code>public HomePage extens Page {
+    public void loginAsGuest() {
+        Configuration conf = getConfiguration();
+        String name = conf.getString("guestName");
+        String password =conf.getString("guestPassword");
+        loginAs(name, password);
+    }
+}
+</code></pre>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/licanhua/selenium-automation">Selenium-automation</a> is maintained by <a href="https://github.com/licanhua">licanhua</a>.</span>
