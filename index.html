@@ -58,11 +58,71 @@
 <h1>
 <a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h1>
 
-<p><a href="https://github.com/licanhua/selenium-automation-showcase/tree/master/src/test/java/com/github/licanhua/test/showcase/amazon/test">Amazon Search Diaper example</a></p>
+<h2>
+<a id="amazon-search-diaper-example" class="anchor" href="#amazon-search-diaper-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/licanhua/selenium-automation-showcase/blob/master/AMAZON.md">Amazon Search Diaper example</a>
+</h2>
 
-<p><a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/expedia">Expedia car search example</a></p>
+<h2>
+<a id="project-scope" class="anchor" href="#project-scope" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project scope</h2>
 
-<p><a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test">Datatables example</a></p>
+<p>This project is very simple:</p>
+
+<ul>
+<li>Goto <a href="http://www.amazon.com">www.amazon.com</a>
+</li>
+<li>Select baby department, Input diaper, and click search</li>
+<li>Extract all product names and their prices, then print them out.</li>
+</ul>
+
+<h4>
+<a id="goal" class="anchor" href="#goal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Goal</h4>
+
+<ul>
+<li>Follow the nature way to describe the pages.</li>
+<li>use json file to provide configurations for test case</li>
+<li>define Pages.java to help navigation for all projects</li>
+<li>log4j.properties and automation.properties setting file.</li>
+<li>Use SelectBox</li>
+<li>load test data from configuration files.</li>
+<li>startPage</li>
+</ul>
+
+<p>No wait for element, no webdriver, no WebElement validation. framework already provide you. You just need to focus on:</p>
+
+<ul>
+<li>Define Pages and describe them as a hierarchy structure.</li>
+<li>Define Pages.java for navigation</li>
+<li>Define test data in configuration files</li>
+<li>Define functions to finish the user operation, page navigation and the business logic.</li>
+</ul>
+
+<h2>
+<a id="expedia-car-search-example" class="anchor" href="#expedia-car-search-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/expedia">Expedia car search example</a>
+</h2>
+
+<p>This project goes to <a href="http://www.expedia.com">www.expedia.com</a>, navigate to car search page, then input the search information and finally goes to car search result page.</p>
+
+<h4>
+<a id="goal-1" class="anchor" href="#goal-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Goal</h4>
+
+<ul>
+<li>Checkbox and Select Box</li>
+<li>OptionalElement</li>
+<li>waitForElementToBeDisplayed and waitForElementToBeAbsent</li>
+<li>@RelativeElement
+####
+document -TBD</li>
+</ul>
+
+<h2>
+<a id="datatables-example" class="anchor" href="#datatables-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a href="https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/">Datatables example</a>
+</h2>
+
+<p>This example shows how to use <strong>@RelativeElement</strong> annotation. It's very easy to extract data row from a table. You just need to define the page hierarchy: HomePage includes ExampleTable, ExampleTable includes ExampleRow, and ExampleRow includes row items. the data in a row is ready for you  to use.</p>
+
+<h4></h4>
+
+<p>document -TBD</p>
 
 <h1>
 <a id="best-practices" class="anchor" href="#best-practices" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Best practices</h1>
@@ -461,10 +521,11 @@ systemproperties</p>
 <li>
 <p><strong>Search priority</strong>: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.</p>
 
-<p>${testMethodName}.${targetEnvironment}.${key}
+<pre><code> ${testMethodName}.${targetEnvironment}.${key}
  ${testMethodName}.{key}
  ${targetEnvironment}.${key}
- ${key}</p>
+ ${key}
+</code></pre>
 </li>
 <li>
 <p><strong>Configuration</strong> Files: we make use of package name to load the configuration files. automation.properties has the lowest priority, but System Properties(same as System.getProperties()) has the highest priority. in this way, it allow us to change the parameters dynamically. For example, we can run the same test cases against firefox and chrome by:</p>
