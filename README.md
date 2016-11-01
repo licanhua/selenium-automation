@@ -30,11 +30,47 @@ This framework provides a lot of best practice I did in my SDET career. I hope y
 	</dependency>
 
 # Examples
-[Amazon Search Diaper example](https://github.com/licanhua/selenium-automation-showcase/tree/master/src/test/java/com/github/licanhua/test/showcase/amazon/test)
+##[Amazon Search Diaper example](https://github.com/licanhua/selenium-automation-showcase/blob/master/AMAZON.md)
 
-[Expedia car search example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/expedia)
+##Project scope
+This project is very simple:
 
-[Datatables example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test)
+ - Goto www.amazon.com
+ - Select baby department, Input diaper, and click search
+ - Extract all product names and their prices, then print them out.
+
+####Goal
+ - Follow the nature way to describe the pages.
+ - use json file to provide configurations for test case
+ - define Pages.java to help navigation for all projects
+ - log4j.properties and automation.properties setting file.
+ - Use SelectBox
+ - load test data from configuration files.
+ - startPage
+
+No wait for element, no webdriver, no WebElement validation. framework already provide you. You just need to focus on:
+
+ - Define Pages and describe them as a hierarchy structure.
+ - Define Pages.java for navigation
+ - Define test data in configuration files
+ - Define functions to finish the user operation, page navigation and the business logic.
+
+##[Expedia car search example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/expedia)
+This project goes to www.expedia.com, navigate to car search page, then input the search information and finally goes to car search result page.
+
+#### Goal
+  - Checkbox and Select Box
+  - OptionalElement
+  - waitForElementToBeDisplayed and waitForElementToBeAbsent
+  - @RelativeElement
+####
+   document -TBD
+   
+##[Datatables example](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/)
+This example shows how to use **@RelativeElement** annotation. It's very easy to extract data row from a table. You just need to define the page hierarchy: HomePage includes ExampleTable, ExampleTable includes ExampleRow, and ExampleRow includes row items. the data in a row is ready for you  to use.
+
+####
+   document -TBD
 
 # Best practices
 
@@ -291,7 +327,8 @@ Mark the element as `@OptionalElement`to skip the auto validation.
 	        waitForElementToBeAbsent(suggestionComponent);
 	    }
 	}
-	
+
+
 Use startPage configuration other than WebDriver navigate
 -------------
 Because selenium need webDrive to navigate and locate element. If you have a Selenium test project, search WebDriver, how many times it occurs? Do we really need it? 
@@ -328,6 +365,7 @@ Now this functionality is implement by framework. You simply define you page lik
     public class HomePage extends Page {
     }
 
+
 @RelativeElement helps you locate relative elements without code
 -------------
 By default, all @FindBy is search in all the webpage. If we describe the context like Table and Row, we need relative search. just put **@RelativeElement** in your relative element. framework would help you change the SearchContext to it's parent(Here position and office in ExampleRow has change SearchContext to By.className=sorting_1) 
@@ -348,10 +386,12 @@ By default, all @FindBy is search in all the webpage. If we describe the context
 	}	
 
 
+
 Easy way to describe tables.
 -------------
 In today's project, tables are created dynamically, and often it creates id like 'aria-option-0', 'aria-option-1', 'aria-option-2'. we can make use of @RelativeElement above to achieve this
 see [Examples](https://github.com/licanhua/selenium-automation/tree/master/selenium-automation-example/src/main/java/com/github/licanhua/example/datatables/test)
+
 
 Flexible test data and configuration management
 --------------
@@ -362,7 +402,8 @@ This framework also supports flexible test data source, framework supports **HOC
 How can we make our test run against different platform and different environment but with different test data without code change. framework introduces two kind of scecrets here:
 
  - package name of the test cases is used to load the configuration in override mode, if the test case is **com.github.licanhua.test.amazon.HomePageTest#testSearch()**. the following configuration under config/ would be loaded in sequence:
- 	
+ 
+ 
 	automation.properties
 	com.conf
 	com.json
@@ -386,10 +427,12 @@ Before we go forward, let see the following definition:
  2. **targetEnvironment**: it's like prod, integration, dev, test   
  3. **Search priority**: for the same key, different value will be got from Configuration. If we search for a key, the following search order will be execute until a value if find.
  
-	 ${testMethodName}.${targetEnvironment}.${key}
-	 ${testMethodName}.{key}
-	 ${targetEnvironment}.${key}
-	 ${key}
+ 
+		 ${testMethodName}.${targetEnvironment}.${key}
+		 ${testMethodName}.{key}
+		 ${targetEnvironment}.${key}
+		 ${key}
+ 
  
  4. **Configuration** Files: we make use of package name to load the configuration files. automation.properties has the lowest priority, but System Properties(same as System.getProperties()) has the highest priority. in this way, it allow us to change the parameters dynamically. For example, we can run the same test cases against firefox and chrome by:
  	
