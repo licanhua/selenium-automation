@@ -4,10 +4,10 @@
     <parent>
         <groupId>com.github.licanhua.test</groupId>
         <artifactId>selenium-automation-parent</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.2</version>
     </parent>
     <artifactId>selenium-automation-framework</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
